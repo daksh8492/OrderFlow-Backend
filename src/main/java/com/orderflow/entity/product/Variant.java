@@ -45,7 +45,7 @@ public class Variant {
     private Item item;
     @Enumerated(EnumType.STRING)
     private Item.ItemStatus status;
-    @ManyToMany(mappedBy = "vendors", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Vendor> vendors = new HashSet<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<WarehouseStock> itemStock = new HashSet<>();

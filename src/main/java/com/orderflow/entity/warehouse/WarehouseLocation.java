@@ -31,7 +31,7 @@ public class WarehouseLocation {
     private WarehouseLocation parentLocation;
     private String locationName;
     private boolean isActive;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "warehouseLocation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<WarehouseStock> stocks = new HashSet<>();
     private Instant createdAt;
     private Instant updatedAt;

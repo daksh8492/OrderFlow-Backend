@@ -27,7 +27,7 @@ public class Warehouse {
     private String city;
     @Enumerated(EnumType.STRING)
     private WarehouseStatus status;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<WarehouseLocation> locations = new HashSet<>();
     private Instant createdAt;
     private Instant updatedAt;

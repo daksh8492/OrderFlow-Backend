@@ -31,7 +31,7 @@ public class Picking {
     private Instant date;
     @ManyToOne(fetch = FetchType.LAZY)
     private Warehouse warehouse;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "picking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PickingItem> pickingItems = new HashSet<>();
     private Double totalItems;
     private Instant startedAt;
