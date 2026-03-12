@@ -44,7 +44,10 @@ public class Carton {
     private Instant createdAt;
     private Instant packedAt;
 
-
+    @PrePersist
+    void onCreate(){
+        createdAt = Instant.now();
+    }
 
     public enum CartonStatus {
         PACKING, PACKED, DELIVERED

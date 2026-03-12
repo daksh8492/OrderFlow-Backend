@@ -23,8 +23,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String code;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FieldOfWork fieldOfWork;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Warehouse userWarehouse;
     private String address;
     private String city;
@@ -32,11 +33,21 @@ public class User {
     private String contactTelephone;
     private String contactEmail;
     private BigDecimal salary;
-    private boolean isActive;
+    private boolean active;
     private Instant joinedAt;
     private Instant createdAt;
     private Instant updatedAt;
 
+    @PrePersist
+    void onCreate(){
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void onUpdate(){
+        updatedAt = Instant.now();
+    }
 
     public enum FieldOfWork{
         ORDER_PROCESSOR, WAREHOUSE_WORKER, DRIVER, ADMIN
