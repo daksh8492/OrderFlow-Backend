@@ -5,7 +5,6 @@ import com.orderflow.entity.user.User;
 import com.orderflow.mapper.UserMapper;
 import com.orderflow.service.UserService;
 import org.mapstruct.factory.Mappers;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    private UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+    @Autowired
+    private UserMapper userMapper;
 
 
     @PostMapping

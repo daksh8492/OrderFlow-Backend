@@ -25,7 +25,7 @@ public class Vendor {
     private String address;
     @Column(unique = true)
     private String TRN;
-    private String Currency;
+    private String currency;
     private String city;
     private String vendorBrand;
     private String contactNumber;

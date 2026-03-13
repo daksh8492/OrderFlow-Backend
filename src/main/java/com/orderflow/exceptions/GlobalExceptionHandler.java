@@ -12,4 +12,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(VendorNotFoundException.class)
+    public ResponseEntity<?> handleVendorNotFoundException(VendorNotFoundException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }
