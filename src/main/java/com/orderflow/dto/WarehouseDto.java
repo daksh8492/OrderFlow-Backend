@@ -20,5 +20,4 @@ public class WarehouseDto {
     private String address;
     private String city;
     private Warehouse.WarehouseStatus status;
-    private Set<UUID> locations = new HashSet<>();
 }

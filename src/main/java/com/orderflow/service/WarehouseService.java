@@ -20,7 +20,7 @@ public class WarehouseService {
         Long count = warehouseRepo.count();
         String code;
         do {
-            code = "WAREHOUSE-" + String.format("%04d", count + 1);
+            code = "WH-" + String.format("%04d", count + 1);
             count++;
         } while (warehouseRepo.existsByCode(code));
         warehouse.setCode(code);
@@ -31,7 +31,7 @@ public class WarehouseService {
         return warehouseRepo.findAll();
     }
 
-    public Warehouse getWarehosueById(UUID id) {
+    public Warehouse getWarehouseById(UUID id) {
         return warehouseRepo.findById(id).orElseThrow(() -> new WarehouseNotFoundException("Warehouse not found"));
     }
 
@@ -40,13 +40,13 @@ public class WarehouseService {
     }
 
     public Warehouse updateWarehouse(UUID id, Warehouse warehouse){
-        Warehouse existingWarehouse = getWarehosueById(id);
+        Warehouse existingWarehouse = getWarehouseById(id);
         BeanUtils.copyProperties(warehouse, existingWarehouse, "warehouseId", "code");
         return warehouseRepo.save(existingWarehouse);
     }
 
     public void deleteWarehouse(UUID id){
-        Warehouse warehouse = getWarehosueById(id);
+        Warehouse warehouse = getWarehouseById(id);
         warehouseRepo.delete(warehouse);
     }
 }

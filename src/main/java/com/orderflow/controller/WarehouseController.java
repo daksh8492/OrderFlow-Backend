@@ -32,7 +32,7 @@ public class WarehouseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<WarehouseDto> getWarehouseById(@PathVariable UUID id){
-        return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.getWarehosueById(id)), HttpStatus.OK);
+        return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.getWarehouseById(id)), HttpStatus.OK);
     }
 
     @GetMapping("/code/{code}")
@@ -40,7 +40,7 @@ public class WarehouseController {
         return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.getWarehouseByCode(code)), HttpStatus.OK);
     }
 
-    @PutMapping("{/id}")
+    @PutMapping("/{id}")
     public ResponseEntity<WarehouseDto> updateWarehouse(@PathVariable UUID id, @RequestBody WarehouseDto warehouseDto){
         return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.updateWarehouse(id, warehouseMapper.warehouseDtoToWarehouse(warehouseDto))), HttpStatus.OK);
     }
