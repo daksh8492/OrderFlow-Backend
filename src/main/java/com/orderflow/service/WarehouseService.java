@@ -47,6 +47,9 @@ public class WarehouseService {
 
     public void deleteWarehouse(UUID id){
         Warehouse warehouse = getWarehouseById(id);
+        if (!warehouse.getLocations().isEmpty()) {
+            throw new IllegalStateException("Warehouse with locations cannot be deleted");
+        }
         warehouseRepo.delete(warehouse);
     }
 }
