@@ -1,7 +1,6 @@
 package com.orderflow.entity.product;
 
 import com.orderflow.entity.vendor.Vendor;
-import com.orderflow.entity.warehouse.WarehouseStock;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,9 +24,9 @@ public class Variant {
     private String sku;
     private BigDecimal sellingPrice;
     private BigDecimal purchasePrice;
-    private Double totalQty;
-    private Double qtyAvailForSales;
-    private Double minStockLevel;
+//    private Double totalQty;
+//    private Double qtyAvailForSales;
+//    private Double minStockLevel;
     @ElementCollection
     @CollectionTable(name = "item_variant_attributes", joinColumns = @JoinColumn(name = "variant_id"))
     @MapKeyColumn(name = "attribute_name")
@@ -44,11 +43,9 @@ public class Variant {
     @JoinColumn(name = "item_id")
     private Item item;
     @Enumerated(EnumType.STRING)
-    private Item.ItemStatus status;
+    private VariantStatus status;
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Vendor> vendors = new HashSet<>();
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<WarehouseStock> itemStock = new HashSet<>();
 
     @PrePersist
     void onCreate(){
@@ -59,6 +56,10 @@ public class Variant {
     @PreUpdate
     void onUpdate(){
         updatedAt = Instant.now();
+    }
+
+    public enum VariantStatus{
+        ACTIVE, INACTIVE, DISCONTINUED, OUT_OF_STOCK;
     }
 
 }

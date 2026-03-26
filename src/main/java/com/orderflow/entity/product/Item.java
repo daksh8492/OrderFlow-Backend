@@ -51,7 +51,7 @@ public class Item {
     }
 
     public enum InwardSource{
-        MANUFACTURE, GOODS;
+        MANUFACTURED, PURCHASED
     }
 }
 
