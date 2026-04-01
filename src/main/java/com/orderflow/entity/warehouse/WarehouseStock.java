@@ -17,7 +17,7 @@ import java.util.UUID;
 public class WarehouseStock {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID stockId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_id")
@@ -29,7 +29,6 @@ public class WarehouseStock {
     @JoinColumn(name = "variant_id")
     private Variant variant;
     private Double totalQuantity;
-    private Double quantityAvailableForSales;
     private Instant createdAt;
     private Instant updatedAt;
 

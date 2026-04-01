@@ -17,32 +17,30 @@ public class WarehouseController {
 
     @Autowired
     private WarehouseService warehouseService;
-    @Autowired
-    private WarehouseMapper warehouseMapper;
 
     @PostMapping
     public ResponseEntity<WarehouseDto> addWarehouse(@RequestBody WarehouseDto warehouseDto){
-        return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.addWarehouse(warehouseMapper.warehouseDtoToWarehouse(warehouseDto))), HttpStatus.CREATED);
+        return new ResponseEntity<>(warehouseService.addWarehouse(warehouseDto), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<WarehouseDto>> getAllWarehouses(){
-        return new ResponseEntity<>(warehouseMapper.warehousesToWarehouseDtos(warehouseService.getAllWarehouses()), HttpStatus.OK);
+        return new ResponseEntity<>(warehouseService.getAllWarehouses(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<WarehouseDto> getWarehouseById(@PathVariable UUID id){
-        return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.getWarehouseById(id)), HttpStatus.OK);
+        return new ResponseEntity<>(warehouseService.getWarehouseById(id), HttpStatus.OK);
     }
 
     @GetMapping("/code/{code}")
     public ResponseEntity<WarehouseDto> getWarehouseByCode(@PathVariable String code){
-        return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.getWarehouseByCode(code)), HttpStatus.OK);
+        return new ResponseEntity<>(warehouseService.getWarehouseByCode(code), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<WarehouseDto> updateWarehouse(@PathVariable UUID id, @RequestBody WarehouseDto warehouseDto){
-        return new ResponseEntity<>(warehouseMapper.warehouseToWarehouseDto(warehouseService.updateWarehouse(id, warehouseMapper.warehouseDtoToWarehouse(warehouseDto))), HttpStatus.OK);
+        return new ResponseEntity<>(warehouseService.updateWarehouse(id, warehouseDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

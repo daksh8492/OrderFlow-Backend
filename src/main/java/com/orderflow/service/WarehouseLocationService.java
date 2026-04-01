@@ -1,10 +1,15 @@
 package com.orderflow.service;
 
+import com.orderflow.dto.WarehouseLocationDto;
 import com.orderflow.entity.warehouse.Warehouse;
 import com.orderflow.entity.warehouse.WarehouseLocation;
 import com.orderflow.exceptions.WarehouseLocationNotFoundException;
 import com.orderflow.exceptions.WarehouseLocationTypeInvalidException;
+import com.orderflow.exceptions.WarehouseNotFoundException;
+import com.orderflow.mapper.WarehouseLocationMapper;
+import com.orderflow.mapper.WarehouseMapper;
 import com.orderflow.repository.warehouse.WarehouseLocationRepo;
+import com.orderflow.repository.warehouse.WarehouseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +23,22 @@ public class WarehouseLocationService {
     private WarehouseLocationRepo warehouseLocationRepo;
     @Autowired
     private WarehouseService warehouseService;
+    @Autowired
+    private WarehouseLocationMapper warehouseLocationMapper;
+    @Autowired
+    private WarehouseRepo warehouseRepo;
+    @Autowired
+    private WarehouseMapper warehouseMapper;
 
-    public WarehouseLocation addWarehouseLocation(WarehouseLocation warehouseLocation) {
-        Warehouse warehouse = warehouseService.getWarehouseById(warehouseLocation.getWarehouse().getWarehouseId());
+    public WarehouseLocationDto addWarehouseLocation(WarehouseLocationDto warehouseLocationDto) {
+        WarehouseLocation warehouseLocation = warehouseLocationMapper.warehouseLocationDtoToWarehouseLocation(warehouseLocationDto);
+        Warehouse warehouse = warehouseRepo.findById(warehouseLocation.getWarehouse().getWarehouseId()).orElseThrow( () -> new WarehouseNotFoundException("Warehouse does not exist"));
         warehouseLocation.setWarehouse(warehouse);
 
         WarehouseLocation parent = null;
 
         if (warehouseLocation.getParentLocation() != null){
-
-        parent = getWarehouseLocationById(warehouseLocation.getParentLocation().getLocationId());
+            parent = warehouseLocationRepo.findById(warehouseLocation.getParentLocation().getLocationId()).orElseThrow( () -> new WarehouseLocationNotFoundException("Parent Warehouse location not found"));
         }
         warehouseLocation.setParentLocation(parent);
 
@@ -62,44 +73,44 @@ public class WarehouseLocationService {
             warehouseLocation.setLocationName(code);
         }
         warehouseLocation.setActive(true);
-        return warehouseLocationRepo.save(warehouseLocation);
+        return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.save(warehouseLocation));
     }
 
-    public List<WarehouseLocation> getAllWarehouseLocations() {
-        return warehouseLocationRepo.findAll();
+    public List<WarehouseLocationDto> getAllWarehouseLocations() {
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAll());
     }
 
-    public WarehouseLocation getWarehouseLocationById(UUID id) {
-        return warehouseLocationRepo.findById(id).orElseThrow(() -> new WarehouseLocationNotFoundException("Warehouse location not found"));
+    public WarehouseLocationDto getWarehouseLocationById(UUID id) {
+        return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.findById(id).orElseThrow(() -> new WarehouseLocationNotFoundException("Warehouse location not found")));
     }
 
-    public List<WarehouseLocation> getAllLocationsFromWarehouse(UUID id) {
-        return warehouseLocationRepo.findByWarehouse_WarehouseId(id);
+    public List<WarehouseLocationDto> getAllLocationsFromWarehouse(UUID id) {
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findByWarehouse_WarehouseId(id));
     }
 
     public void deleteWarehouseLocationById(UUID id) {
-        WarehouseLocation warehouseLocation = getWarehouseLocationById(id);
+        WarehouseLocation warehouseLocation = warehouseLocationMapper.warehouseLocationDtoToWarehouseLocation(getWarehouseLocationById(id));
         warehouseLocationRepo.delete(warehouseLocation);
     }
 
-    public WarehouseLocation activateWarehouseLocationById(UUID id) {
-        WarehouseLocation warehouseLocation = getWarehouseLocationById(id);
+    public WarehouseLocationDto activateWarehouseLocationById(UUID id) {
+        WarehouseLocation warehouseLocation = warehouseLocationMapper.warehouseLocationDtoToWarehouseLocation(getWarehouseLocationById(id));
         warehouseLocation.setActive(true);
-        return warehouseLocationRepo.save(warehouseLocation);
+        return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.save(warehouseLocation));
     }
 
-    public WarehouseLocation deactivateWarehouseLocationById(UUID id) {
-        WarehouseLocation warehouseLocation = getWarehouseLocationById(id);
+    public WarehouseLocationDto deactivateWarehouseLocationById(UUID id) {
+        WarehouseLocation warehouseLocation = warehouseLocationMapper.warehouseLocationDtoToWarehouseLocation(getWarehouseLocationById(id));
         warehouseLocation.setActive(false);
-        return warehouseLocationRepo.save(warehouseLocation);
+        return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.save(warehouseLocation));
     }
 
-    public List<WarehouseLocation> getChildrenLocations(UUID id){
-        return warehouseLocationRepo.findAllByParentLocation_LocationId(id);
+    public List<WarehouseLocationDto> getChildrenLocations(UUID id){
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAllByParentLocation_LocationId(id));
     }
 
-    public List<WarehouseLocation> getAllLocationFromType(WarehouseLocation.WarehouseLocationType type){
-        return warehouseLocationRepo.findAllByLocationType(type);
+    public List<WarehouseLocationDto> getAllLocationFromType(WarehouseLocation.WarehouseLocationType type){
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAllByLocationType(type));
     }
 }
 

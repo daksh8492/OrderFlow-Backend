@@ -33,7 +33,7 @@ public class User {
     private String contactTelephone;
     private String contactEmail;
     private BigDecimal salary;
-    private boolean active;
+    private Boolean active;
     private Instant joinedAt;
     private Instant createdAt;
     private Instant updatedAt;

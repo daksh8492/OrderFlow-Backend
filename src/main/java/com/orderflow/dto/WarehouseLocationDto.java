@@ -19,5 +19,5 @@ public class WarehouseLocationDto {
     private String code;
     private UUID parentLocationId;
     private String locationName;
-    private boolean active;
+    private Boolean active;
 }

@@ -30,7 +30,7 @@ public class WarehouseLocation {
     @JoinColumn(name = "parent_location_id")
     private WarehouseLocation parentLocation;
     private String locationName;
-    private boolean active;
+    private Boolean active;
     @OneToMany(mappedBy = "warehouseLocation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<WarehouseStock> stocks = new HashSet<>();
     private Instant createdAt;

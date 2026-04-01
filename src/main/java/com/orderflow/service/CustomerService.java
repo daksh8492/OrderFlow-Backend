@@ -1,9 +1,10 @@
 package com.orderflow.service;
 
+import com.orderflow.dto.CustomerDto;
 import com.orderflow.entity.customer.Customer;
 import com.orderflow.exceptions.CustomerNotFoundException;
+import com.orderflow.mapper.CustomerMapper;
 import com.orderflow.repository.customer.CustomerRepo;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,11 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepo customerRepo;
+    @Autowired
+    private CustomerMapper customerMapper;
 
-    public Customer addCustomer(Customer customer){
+    public CustomerDto addCustomer(CustomerDto customerDto){
+        Customer customer = customerMapper.customerDtoToCustomer(customerDto);
         Long count = customerRepo.count();
         String code;
         do {
@@ -25,29 +29,35 @@ public class CustomerService {
             count++;
         }while (customerRepo.existsByCustomerCode(code));
         customer.setCustomerCode(code);
-        return customerRepo.save(customer);
+        return customerMapper.customerToCustomerDto(customerRepo.save(customer));
     }
 
-    public List<Customer> getAllCustomers() {return customerRepo.findAll();}
+    public List<CustomerDto> getAllCustomers() {return customerMapper.customersToCustomerDtos(customerRepo.findAll());}
 
-    public Customer getCustomerByCode(String code){
+    public CustomerDto getCustomerByCode(String code){
         Optional<Customer> customer = customerRepo.findByCustomerCode(code);
-        return customer.orElseThrow(()-> new CustomerNotFoundException("Customer not found"));
+        return customerMapper.customerToCustomerDto(customer.orElseThrow(()-> new CustomerNotFoundException("Customer not found")));
     }
 
-    public Customer getCustomerById(UUID id){
+    public CustomerDto getCustomerById(UUID id){
         Optional<Customer> customer = customerRepo.findById(id);
-        return customer.orElseThrow(()-> new CustomerNotFoundException("Customer not found"));
+        return customerMapper.customerToCustomerDto(customer.orElseThrow(()-> new CustomerNotFoundException("Customer not found")));
     }
 
-    public Customer updateCustomer(UUID id, Customer customer){
-        Customer existingCustomer = getCustomerById(id);
-        BeanUtils.copyProperties(customer, existingCustomer, "customerCode", "customerId");
-        return customerRepo.save(existingCustomer);
+    public CustomerDto updateCustomer(UUID id, CustomerDto customerDto){
+        Customer customer = customerMapper.customerDtoToCustomer(customerDto);
+        Customer existingCustomer = customerMapper.customerDtoToCustomer(getCustomerById(id));
+        if (customer.getCustomerName() != null) existingCustomer.setCustomerName(customer.getCustomerName());
+        if (customer.getAddress() != null) existingCustomer.setAddress(customer.getAddress());
+        if (customer.getCity() != null) existingCustomer.setCity(customer.getCity());
+        if (customer.getContactNumber() != null) existingCustomer.setContactNumber(customer.getContactNumber());
+        if (customer.getContactEmail() != null) existingCustomer.setContactEmail(customer.getContactEmail());
+        if (customer.getStatus() != null) existingCustomer.setStatus(customer.getStatus());
+        return customerMapper.customerToCustomerDto(customerRepo.save(existingCustomer));
     }
 
     public void deleteCustomer(UUID id){
-        Customer customer = getCustomerById(id);
+        Customer customer = customerMapper.customerDtoToCustomer(getCustomerById(id));
         customerRepo.delete(customer);
     }
 }

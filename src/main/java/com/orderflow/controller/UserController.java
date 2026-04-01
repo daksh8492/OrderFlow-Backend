@@ -26,35 +26,38 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> addUser(@RequestBody UserDto userDto){
-        User user = userMapper.dtoToUser(userDto);
-        return new ResponseEntity<>(userMapper.userToUserDto(userService.addUser(user)), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers(){
-        List<UserDto> userDtos = userMapper.usersToUserDtos(userService.getAllUsers());
-        return new ResponseEntity<>(userDtos, HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/code/{code}")
     public ResponseEntity<UserDto> getUserByCode(@PathVariable String code){
-        return new ResponseEntity<>(userMapper.userToUserDto(userService.getUserByCode(code)), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserByCode(code), HttpStatus.OK);
     }
 
     @GetMapping("fieldOfWork/{fieldOfWork}")
     public ResponseEntity<List<UserDto>> getUserByFieldOfWork(@PathVariable User.FieldOfWork fieldOfWork){
-        List<UserDto> users = userMapper.usersToUserDtos(userService.getUserByFieldOfWork(fieldOfWork));
+        List<UserDto> users = userService.getUserByFieldOfWork(fieldOfWork);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable UUID id){
-        return new ResponseEntity<>(userMapper.userToUserDto(userService.getUserById(id)), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, @RequestBody UserDto userDto){
-        return new ResponseEntity<>(userMapper.userToUserDto(userService.updateUser(id, userMapper.dtoToUser(userDto))), HttpStatus.OK);
+        return new ResponseEntity<>(userService.updateUser(id, userDto), HttpStatus.OK);
+    }
+
+    @PatchMapping("/join/{id}")
+    public ResponseEntity<UserDto> joinUser(@PathVariable UUID id){
+        return new ResponseEntity<>(userService.joinUser(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

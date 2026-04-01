@@ -17,32 +17,30 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
-    @Autowired
-    private CustomerMapper customerMapper;
 
     @PostMapping
     public ResponseEntity<CustomerDto> addCustomer(@RequestBody CustomerDto customerDto){
-        return new ResponseEntity<>(customerMapper.customerToCustomerDto(customerService.addCustomer(customerMapper.customerDtoToCustomer(customerDto))), HttpStatus.CREATED);
+        return new ResponseEntity<>(customerService.addCustomer(customerDto), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<CustomerDto>> getAllCustomers(){
-        return new ResponseEntity<>(customerMapper.customersToCustomerDtos(customerService.getAllCustomers()), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.getAllCustomers(), HttpStatus.OK);
     }
 
     @GetMapping("/code/{code}")
     public ResponseEntity<CustomerDto> getCustomerByCode(@PathVariable String code){
-        return new ResponseEntity<>(customerMapper.customerToCustomerDto(customerService.getCustomerByCode(code)), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.getCustomerByCode(code), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable UUID id){
-        return new ResponseEntity<>(customerMapper.customerToCustomerDto(customerService.getCustomerById(id)), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.getCustomerById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable UUID id, @RequestBody CustomerDto customerDto){
-        return new ResponseEntity<>(customerMapper.customerToCustomerDto(customerService.updateCustomer(id, customerMapper.customerDtoToCustomer(customerDto))), HttpStatus.OK);
+        return new ResponseEntity<>(customerService.updateCustomer(id, customerDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -1,11 +1,9 @@
 package com.orderflow.dto;
 
 import com.orderflow.entity.customer.Customer;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -24,4 +22,5 @@ public class CustomerDto {
     private String contactNumber;
     private String contactEmail;
     private Customer.CustomerStatus status;
+    private Instant createdAt;
 }

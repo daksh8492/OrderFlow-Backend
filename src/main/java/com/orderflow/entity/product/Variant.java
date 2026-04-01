@@ -24,14 +24,14 @@ public class Variant {
     private String sku;
     private BigDecimal sellingPrice;
     private BigDecimal purchasePrice;
-//    private Double totalQty;
+    private Double totalQty;
 //    private Double qtyAvailForSales;
 //    private Double minStockLevel;
     @ElementCollection
     @CollectionTable(name = "item_variant_attributes", joinColumns = @JoinColumn(name = "variant_id"))
     @MapKeyColumn(name = "attribute_name")
     @Column(name = "attribute_value")
-    private HashMap<String, String> attributes;
+    private Map<String, String> attributes = new HashMap<>();
     private String barcode;
     @ElementCollection
     @CollectionTable(name = "item_variant_images", joinColumns = @JoinColumn(name = "variant_id"))
