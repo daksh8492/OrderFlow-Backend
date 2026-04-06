@@ -6,6 +6,7 @@ import com.orderflow.entity.order.Order;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class Picking {
     private Warehouse warehouse;
     @OneToMany(mappedBy = "picking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PickingItem> pickingItems = new HashSet<>();
-    private Double totalItems;
+    private BigDecimal totalItems;
     private Instant startedAt;
     private Instant completedAt;
 

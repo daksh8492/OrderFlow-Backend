@@ -5,6 +5,7 @@ import com.orderflow.entity.product.Variant;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class WarehouseStock {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "variant_id")
     private Variant variant;
-    private Double totalQuantity;
+    private BigDecimal totalQuantity;
     private Instant createdAt;
     private Instant updatedAt;
 

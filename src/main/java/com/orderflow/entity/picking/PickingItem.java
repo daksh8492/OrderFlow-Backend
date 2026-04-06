@@ -5,6 +5,7 @@ import com.orderflow.entity.order.OrderItem;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -24,7 +25,7 @@ public class PickingItem {
 //    private Variant variant;
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderItem orderItem;
-    private Double pickedItems;
+    private BigDecimal pickedItems;
     @ManyToOne(fetch = FetchType.LAZY)
     private WarehouseStock pickedFrom;
 

@@ -5,6 +5,7 @@ import com.orderflow.entity.order.OrderItem;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +23,6 @@ public class CartonItem {
     private Carton carton;
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderItem orderItem;
-    private Double packedQuantity;
+    private BigDecimal packedQuantity;
 
 }

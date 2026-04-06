@@ -4,6 +4,7 @@ import com.orderflow.entity.product.Variant;
 import com.orderflow.entity.vendor.Vendor;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class VendorDto {
     private String contactTelephone;
     private String contactEmail;
     private String paymentTerms;
-    private Double minimumOrderValue;
+    private BigDecimal minimumOrderValue;
     private Vendor.VendorStatus status;
     private Set<UUID> variantIds = new HashSet<>();
 }

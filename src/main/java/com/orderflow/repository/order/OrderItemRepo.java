@@ -4,8 +4,11 @@ import com.orderflow.entity.order.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface OrderItemRepo extends JpaRepository<OrderItem, UUID> {
+    Set<OrderItem> findAllByOrder_OrderId(UUID orderOrderId);
 }

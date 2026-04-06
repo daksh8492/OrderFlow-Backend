@@ -24,9 +24,9 @@ public class Variant {
     private String sku;
     private BigDecimal sellingPrice;
     private BigDecimal purchasePrice;
-    private Double totalQty;
-//    private Double qtyAvailForSales;
-//    private Double minStockLevel;
+//    private BigDecimal totalQty;
+//    private BigDecimal qtyAvailForSales;
+//    private BigDecimal minStockLevel;
     @ElementCollection
     @CollectionTable(name = "item_variant_attributes", joinColumns = @JoinColumn(name = "variant_id"))
     @MapKeyColumn(name = "attribute_name")

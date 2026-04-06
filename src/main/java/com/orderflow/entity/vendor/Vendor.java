@@ -3,6 +3,8 @@ package com.orderflow.entity.vendor;
 import com.orderflow.entity.product.Variant;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +34,7 @@ public class Vendor {
     private String contactTelephone;
     private String contactEmail;
     private String paymentTerms;
-    private Double minimumOrderValue;
+    private BigDecimal minimumOrderValue;
     @Enumerated(EnumType.STRING)
     private VendorStatus status;
     private Instant createdAt;

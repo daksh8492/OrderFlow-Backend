@@ -25,8 +25,8 @@ public class OrderItem {
     @JoinColumn(name = "variant_id")
     private Variant variant;
     private BigDecimal rate;
-    private Double quantity;
-    private Double taxRate;
+    private BigDecimal quantity;
+    private BigDecimal taxRate;
     private BigDecimal taxAmount;
     @Enumerated(EnumType.STRING)
     private DiscountType discountType;

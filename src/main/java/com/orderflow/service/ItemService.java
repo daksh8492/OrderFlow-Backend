@@ -50,19 +50,19 @@ public class ItemService {
     }
 
     public ItemDto activateItem(UUID id) {
-        Item item = itemMapper.itemDtoToItem(getItemById(id));
+        Item item = itemRepo.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found"));
         item.setStatus(Item.ItemStatus.ACTIVE);
         return itemMapper.itemToItemDto(itemRepo.save(item));
     }
 
     public ItemDto deactivateItem(UUID id) {
-        Item item = itemMapper.itemDtoToItem(getItemById(id));
+        Item item = itemRepo.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found"));
         item.setStatus(Item.ItemStatus.INACTIVE);
         return itemMapper.itemToItemDto(itemRepo.save(item));
     }
 
     public ItemDto discontinueItem(UUID id) {
-        Item item = itemMapper.itemDtoToItem(getItemById(id));
+        Item item = itemRepo.findById(id).orElseThrow(() -> new ItemNotFoundException("Item not found"));
         item.setStatus(Item.ItemStatus.DISCONTINUED);
         return itemMapper.itemToItemDto(itemRepo.save(item));
     }

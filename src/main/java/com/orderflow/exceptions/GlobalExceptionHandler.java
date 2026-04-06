@@ -1,6 +1,7 @@
 package com.orderflow.exceptions;
 
 import com.orderflow.dto.WarehouseLocationDto;
+import com.orderflow.entity.warehouse.WarehouseStock;
 import org.aspectj.weaver.ast.Var;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,5 +49,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(VariantNotFoundException.class)
     public ResponseEntity<VariantNotFoundException> handleVariantNotFoundException(VariantNotFoundException ex){
         return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(WarehouseStockNotFoundException.class)
+    public ResponseEntity<WarehouseStockNotFoundException> handleWarehouseStockNotFoundException(WarehouseStockNotFoundException ex){
+        return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<IllegalArgumentException> handleIllegalArgumentException(IllegalArgumentException ex){
+        return new ResponseEntity<>(ex, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<IllegalStateException> handleIllegalStateException(IllegalStateException ex){
+        return new ResponseEntity<>(ex, HttpStatus.BAD_REQUEST);
     }
 }

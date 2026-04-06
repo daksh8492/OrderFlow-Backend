@@ -19,9 +19,9 @@ public class VariantDto {
     private String sku;
     private BigDecimal sellingPrice;
     private BigDecimal purchasePrice;
-    private Double totalQty;
-    private Double qtyAvailForSales;
-//    private Double minStockLevel;
+//    private BigDecimal totalQty;
+//    private BigDecimal qtyAvailForSales;
+//    private BigDecimal minStockLevel;
     private HashMap<String, String> attributes;
     private String barcode;
     private List<String> imageUrls;

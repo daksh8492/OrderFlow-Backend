@@ -2,6 +2,7 @@ package com.orderflow.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -16,6 +17,6 @@ public class WarehouseStockDto {
     private UUID warehouseId;
     private UUID warehouseLocationId;
     private UUID variantId;
-    private Double totalQuantity;
+    private BigDecimal totalQuantity;
     private Instant createdAt;
 }

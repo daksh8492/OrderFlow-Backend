@@ -2,6 +2,7 @@ package com.orderflow.repository.warehouse;
 
 import com.orderflow.entity.warehouse.Warehouse;
 import com.orderflow.entity.warehouse.WarehouseLocation;
+import com.orderflow.entity.warehouse.WarehouseStock;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +21,6 @@ public interface WarehouseLocationRepo extends JpaRepository<WarehouseLocation, 
     List<WarehouseLocation> findAllByLocationType(WarehouseLocation.WarehouseLocationType locationType);
 
     Long countByWarehouseAndLocationTypeAndParentLocation(Warehouse warehouse, WarehouseLocation.WarehouseLocationType locationType, WarehouseLocation parentLocation);
+
+    List<WarehouseStock> findAllByLocationId(UUID locationId);
 }
