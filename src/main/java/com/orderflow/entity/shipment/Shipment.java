@@ -32,6 +32,8 @@ public class Shipment {
     private Status status;
     private Instant dispatchAt;
     private Instant deliveredAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 
     public enum Status {

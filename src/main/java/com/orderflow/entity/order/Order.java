@@ -33,13 +33,16 @@ public class Order {
     private String receiverPhone;
     private String receiverName;
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private OrderStatus status = OrderStatus.PENDING;
     @Enumerated(EnumType.STRING)
     private Priority priority;
     private Instant orderDate;
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
     private Set<OrderItem> items = new HashSet<>();
     @Column(precision = 19, scale = 4)
     private BigDecimal subtotal;
@@ -55,22 +58,6 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "confirmed_by")
-    private User confirmedBy;
-    private Instant confirmedAt;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "picker_id")
-    private User assignedPicker;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "packer_id")
-    private User assignedPacker;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dispatcher_id")
-    private User assignedDispatcher;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "driver_id")
-    private User assignedDriver;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -92,7 +79,7 @@ public class Order {
     }
 
     public enum OrderStatus {
-        PENDING, PROCESSING, PICKING, PICKED, PACKING, PACKED, DISPATCHING, SHIPPED, OUT_FOR_DELIVERY, DELIVERED, COMPLETED, CANCELLED, FAILED, RETURNED
+        PENDING, PROCESSING, SHIPPED, OUT_FOR_DELIVERY, DELIVERED, COMPLETED, CANCELLED, FAILED, RETURNED
     }
 
     public enum Priority {

@@ -33,11 +33,5 @@ public class OrderDto {
     private BigDecimal totalAmount;
     private UUID fulfillingWarehouseId;
     private UUID createdBy;
-    private UUID confirmedBy;
-    private Instant confirmedAt;
-    private UUID assignedPicker;
-    private UUID assignedPacker;
-    private UUID assignedDispatcher;
-    private UUID assignedDriver;
     private Instant createdAt;
 }

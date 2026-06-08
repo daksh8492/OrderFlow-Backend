@@ -25,7 +25,6 @@ public interface VariantMapper {
 
     @Mapping(source = "item.itemId", target = "itemId")
     @Mapping(target = "vendorIds", source = "vendors", qualifiedByName = "vendorsToIds")
-    @Mapping(target = "qtyAvailForSales", ignore = true)
     VariantDto variantToVariantDto(Variant variant);
 
     List<VariantDto> variantsToVariantDtos(List<Variant> variants);

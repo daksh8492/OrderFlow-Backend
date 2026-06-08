@@ -24,4 +24,5 @@ public class OrderItemDto {
     private BigDecimal discountValue;
     private BigDecimal discountAmount;
     private BigDecimal itemTotal;
+    private UUID orderId;
 }

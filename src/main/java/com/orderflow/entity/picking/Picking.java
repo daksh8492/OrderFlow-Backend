@@ -29,7 +29,6 @@ public class Picking {
     private Order order;
     @Enumerated(EnumType.STRING)
     private PickingStatus status;
-    private Instant date;
     @ManyToOne(fetch = FetchType.LAZY)
     private Warehouse warehouse;
     @OneToMany(mappedBy = "picking", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -37,6 +36,8 @@ public class Picking {
     private BigDecimal totalItems;
     private Instant startedAt;
     private Instant completedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 
     public enum PickingStatus {

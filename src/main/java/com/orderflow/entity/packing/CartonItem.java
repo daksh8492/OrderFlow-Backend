@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -24,5 +25,7 @@ public class CartonItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private OrderItem orderItem;
     private BigDecimal packedQuantity;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -28,5 +29,7 @@ public class PickingItem {
     private BigDecimal pickedItems;
     @ManyToOne(fetch = FetchType.LAZY)
     private WarehouseStock pickedFrom;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 }

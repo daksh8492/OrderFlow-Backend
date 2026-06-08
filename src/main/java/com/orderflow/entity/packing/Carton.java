@@ -42,6 +42,7 @@ public class Carton {
     @Enumerated(EnumType.STRING)
     private CartonStatus status;
     private Instant createdAt;
+    private Instant updatedAt;
     private Instant packedAt;
 
     @PrePersist

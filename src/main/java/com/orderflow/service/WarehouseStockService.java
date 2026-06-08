@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +47,7 @@ public class WarehouseStockService {
         WarehouseLocation location = warehouseLocationRepo.findById(warehouseStockDto.getWarehouseLocationId()).orElseThrow(() -> new WarehouseLocationNotFoundException("Warehouse location not found"));
         warehouseStock.setWarehouseLocation(location);
         warehouseStock.setWarehouse(location.getWarehouse());
-        if (warehouseStock.getTotalQuantity() == null) warehouseStock.setTotalQuantity(0.0);
+        if (warehouseStock.getTotalQuantity() == null) warehouseStock.setTotalQuantity(BigDecimal.ZERO);
         Variant variant = variantRepo.findById(warehouseStockDto.getVariantId()).orElseThrow(() -> new VariantNotFoundException("Variant does not exist"));
         if (warehouseStockRepo.existsByVariantAndWarehouseLocation(variant, location)) {
             throw new IllegalArgumentException("Warehouse Stock already exists at this location for this variant");
@@ -55,17 +56,18 @@ public class WarehouseStockService {
     }
 
     @Transactional
-    public WarehouseStockDto updateStock(UUID warehouseStockId, Double quantity) {
-        WarehouseStock warehouseStock = warehouseStockRepo.findById(warehouseStockId).orElseThrow( () -> new WarehouseStockNotFoundException("Warehouse stock not found"));
-        if (quantity <= 0.0 && warehouseStock.getTotalQuantity() < Math.abs(quantity)) {
+    public WarehouseStockDto updateStock(UUID warehouseStockId, BigDecimal quantity) {
+        if (quantity.compareTo(BigDecimal.ZERO) == 0) throw new IllegalArgumentException("Quantity cannot be zero");
+        WarehouseStock warehouseStock = warehouseStockRepo.findById(warehouseStockId).orElseThrow(() -> new WarehouseStockNotFoundException("Warehouse stock not found"));
+        if (quantity.compareTo(BigDecimal.ZERO) < 0 && warehouseStock.getTotalQuantity().compareTo(quantity.abs()) < 0) {
             throw new IllegalArgumentException("Total quantity is too low");
         }
-        warehouseStock.setTotalQuantity(warehouseStock.getTotalQuantity() + quantity);
+        warehouseStock.setTotalQuantity(warehouseStock.getTotalQuantity().add(quantity));
         return warehouseStockMapper.warehouseStockToWarehouseStockDto(warehouseStockRepo.save(warehouseStock));
     }
 
 //    @Transactional
-//    public WarehouseStockDto decreaseStock(UUID variantId, UUID locationId, Double quantity) {
+//    public WarehouseStockDto decreaseStock(UUID variantId, UUID locationId, BigDecimal quantity) {
 //        Variant variant = variantRepo.findById(variantId).orElseThrow(() -> new VariantNotFoundException("Variant does not exist"));
 //        WarehouseLocation location = warehouseLocationRepo.findById(locationId).orElseThrow(() -> new WarehouseLocationNotFoundException("Location does not exist"));
 //        WarehouseStock warehouseStock = warehouseStockRepo.findByVariantAndWarehouseLocation(variant, location).orElseThrow(() -> new WarehouseStockNotFoundException("Warehouse Stock does not exist for the provided location and variant"));
@@ -81,18 +83,20 @@ public class WarehouseStockService {
 //    }
 
     @Transactional
-    public WarehouseStockDto transferStock(UUID sourceID, UUID targetId, Double transferQuantity) {
+    public WarehouseStockDto transferStock(UUID sourceID, UUID targetId, BigDecimal transferQuantity) {
+        if (transferQuantity.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Transfer quantity must be greater than 0");
         WarehouseStock sourceStock = warehouseStockRepo.findById(sourceID).orElseThrow(() -> new WarehouseStockNotFoundException("Source Warehouse Stock not found"));
-        if (sourceStock.getTotalQuantity() < transferQuantity)
+        if (sourceStock.getTotalQuantity().compareTo(transferQuantity) < 0)
             throw new IllegalArgumentException("Source Warehouse Stock does not have enough quantity");
         WarehouseStock targetStock = warehouseStockRepo.findById(targetId).orElseThrow(() -> new WarehouseStockNotFoundException("Target Warehouse Stock not found"));
-        if (sourceStock.getVariant() != targetStock.getVariant())
+        if (sourceStock.getVariant().getVariantId() != targetStock.getVariant().getVariantId())
             throw new IllegalArgumentException("The Variants do not match");
-        if (sourceStock.getWarehouse() != targetStock.getWarehouse())
+        if (sourceStock.getWarehouse().getWarehouseId() != targetStock.getWarehouse().getWarehouseId())
             throw new IllegalArgumentException("The Warehouses do not match");
-        targetStock.setTotalQuantity(targetStock.getTotalQuantity() + transferQuantity);
-        sourceStock.setTotalQuantity(sourceStock.getTotalQuantity() - transferQuantity);
-        if (sourceStock.getTotalQuantity() <= 0.0) warehouseStockRepo.delete(sourceStock);
+        targetStock.setTotalQuantity(targetStock.getTotalQuantity().add(transferQuantity));
+        sourceStock.setTotalQuantity(sourceStock.getTotalQuantity().subtract(transferQuantity));
+        if (sourceStock.getTotalQuantity().compareTo(BigDecimal.ZERO) <= 0) warehouseStockRepo.delete(sourceStock);
         else warehouseStockRepo.save(sourceStock);
         return warehouseStockMapper.warehouseStockToWarehouseStockDto(warehouseStockRepo.save(targetStock));
     }
@@ -115,8 +119,9 @@ public class WarehouseStockService {
     }
 
     public void deleteWarehouseStock(UUID warehouseStockId) {
-        WarehouseStock warehouseStock = warehouseStockRepo.findById(warehouseStockId).orElseThrow( () -> new WarehouseStockNotFoundException("Warehouse stock not found"));
-        if (warehouseStock.getTotalQuantity() != null && warehouseStock.getTotalQuantity() != 0.0) throw new IllegalArgumentException("Total quantity is not 0");
+        WarehouseStock warehouseStock = warehouseStockRepo.findById(warehouseStockId).orElseThrow(() -> new WarehouseStockNotFoundException("Warehouse stock not found"));
+        if (warehouseStock.getTotalQuantity() != null && warehouseStock.getTotalQuantity().compareTo(BigDecimal.ZERO) != 0)
+            throw new IllegalArgumentException("Total quantity is not 0");
         warehouseStockRepo.delete(warehouseStock);
     }
 

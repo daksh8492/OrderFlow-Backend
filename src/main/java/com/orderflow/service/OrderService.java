@@ -11,6 +11,7 @@ import com.orderflow.repository.customer.CustomerRepo;
 import com.orderflow.repository.order.OrderItemRepo;
 import com.orderflow.repository.order.OrderRepo;
 import com.orderflow.repository.product.VariantRepo;
+import com.orderflow.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,9 +42,16 @@ public class OrderService {
     @Autowired
     private VariantRepo variantRepo;
 
+//    @Autowired
+//    private AuthUtil authUtil;
+
     @Transactional
     public OrderDto addOrder(OrderDto orderDto) {
         Order order = orderMapper.orderDtoToOrder(orderDto);
+        if (order.getItems() == null) {
+            order.setItems(new HashSet<>());
+        }
+        order.setOrderNumber(generateOrderNumber());
         order.setCustomer(customerRepo.findById(orderDto.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException("Customer Not Found")));
 
         Set<OrderItem> items = orderItemMapper.orderItemDtosToOrderItems(orderDto.getItems());
@@ -211,7 +219,7 @@ public class OrderService {
 
     @Transactional
     public OrderItemDto getOrderItemByOrderAndItemId(UUID orderId, UUID itemId) {
-        return orderItemMapper.orderItemToOrderDto(orderItemRepo.findById(itemId).orElseThrow(() -> new OrderItemNotFoundException("Order Item not found")));
+        return orderItemMapper.orderItemToOrderDto(orderItemRepo.findByOrderItemIdAndOrder_OrderId(itemId, orderId).orElseThrow(() -> new OrderItemNotFoundException("Order Item not found for this order")));
     }
 
     @Transactional
@@ -219,6 +227,19 @@ public class OrderService {
         return orderMapper.ordersToOrderDtos(orderRepo.findByStatus(status));
     }
 
+    private String generateOrderNumber() {
 
+        Optional<Order> lastOrder = orderRepo.findTopByOrderByOrderNumberDesc();
+
+        if (lastOrder.isEmpty()) {
+            return "ORD-0001";
+        }
+
+        String lastNumber = lastOrder.get().getOrderNumber();
+
+        int number = Integer.parseInt(lastNumber.substring(4));
+
+        return String.format("ORD-%04d", number + 1);
+    }
 
 }

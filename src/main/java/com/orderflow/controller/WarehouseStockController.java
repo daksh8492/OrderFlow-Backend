@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,12 +24,12 @@ public class WarehouseStockController {
     }
 
     @PutMapping("/{warehouseStockId}")
-    public ResponseEntity<WarehouseStockDto> updateStock(@PathVariable UUID warehouseStockId, @RequestBody Double quantity) {
+    public ResponseEntity<WarehouseStockDto> updateStock(@PathVariable UUID warehouseStockId, @RequestBody BigDecimal quantity) {
         return new ResponseEntity<>(warehouseStockService.updateStock(warehouseStockId, quantity), HttpStatus.OK);
     }
 
     @PutMapping("/transfer/{targetId}")
-    public ResponseEntity<WarehouseStockDto> transferStock(@RequestBody UUID sourceId,@RequestBody Double quantity, @PathVariable UUID targetId) {
+    public ResponseEntity<WarehouseStockDto> transferStock(@RequestBody UUID sourceId, @RequestBody BigDecimal quantity, @PathVariable UUID targetId) {
         return new ResponseEntity<>(warehouseStockService.transferStock(sourceId, targetId, quantity), HttpStatus.OK);
     }
 
