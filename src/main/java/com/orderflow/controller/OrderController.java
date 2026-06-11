@@ -2,6 +2,7 @@ package com.orderflow.controller;
 
 import com.orderflow.dto.OrderDto;
 import com.orderflow.dto.OrderItemDto;
+import com.orderflow.dto.OrderSummaryDto;
 import com.orderflow.entity.order.Order;
 import com.orderflow.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderDto>> getAllOrders() {
+    public ResponseEntity<List<OrderSummaryDto>> getAllOrders() {
         return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
     }
 
@@ -36,7 +37,7 @@ public class OrderController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<OrderDto>> getOrdersByCustomerId(@PathVariable UUID customerId) {
+    public ResponseEntity<List<OrderSummaryDto>> getOrdersByCustomerId(@PathVariable UUID customerId) {
         return new ResponseEntity<>(orderService.getOrdersByCustomerId(customerId), HttpStatus.OK);
     }
 
@@ -45,18 +46,8 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrderbyOrderNumber(orderNumber), HttpStatus.OK);
     }
 
-    @GetMapping("/{orderId}/items")
-    public ResponseEntity<Set<OrderItemDto>> getOrdersByOrderId(@PathVariable UUID orderId) {
-        return new ResponseEntity<>(orderService.getOrderItemsByOrderId(orderId), HttpStatus.OK);
-    }
-
-    @GetMapping("/{orderId}/items/{itemId}")
-    public ResponseEntity<OrderItemDto> getOrderItemByOrderAndItemId(@PathVariable UUID orderId, @PathVariable UUID itemId) {
-        return new ResponseEntity<>(orderService.getOrderItemByOrderAndItemId(orderId, itemId), HttpStatus.OK);
-    }
-
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<OrderDto>> getOrdersByStatus(@PathVariable Order.OrderStatus status) {
+    public ResponseEntity<List<OrderSummaryDto>> getOrdersByStatus(@PathVariable Order.OrderStatus status) {
         return new ResponseEntity<>(orderService.getALlByStatus(status), HttpStatus.OK);
     }
 
@@ -78,6 +69,12 @@ public class OrderController {
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<OrderDto> cancelOrder(@PathVariable UUID orderId) {
         return new ResponseEntity<>(orderService.cancelOrder(orderId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<?> deleteOrder(@PathVariable UUID orderId) {
+        orderService.deleteOrder(orderId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

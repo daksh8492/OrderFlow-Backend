@@ -1,5 +1,6 @@
 package com.orderflow.entity.picking;
 
+import com.orderflow.entity.order.OrderItem;
 import com.orderflow.entity.user.User;
 import com.orderflow.entity.warehouse.Warehouse;
 import com.orderflow.entity.order.Order;
@@ -27,21 +28,36 @@ public class Picking {
     private User picker;
     @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
-    @Enumerated(EnumType.STRING)
-    private PickingStatus status;
+//    @Enumerated(EnumType.STRING)
+//    private PickingStatus status;
     @ManyToOne(fetch = FetchType.LAZY)
     private Warehouse warehouse;
     @OneToMany(mappedBy = "picking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PickingItem> pickingItems = new HashSet<>();
     private BigDecimal totalItems;
-    private Instant startedAt;
-    private Instant completedAt;
+//    private Instant startedAt;
+//    private Instant completedAt;
     private Instant createdAt;
     private Instant updatedAt;
 
+    @PrePersist
+    void onCreate() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = Instant.now();
+    }
 
     public enum PickingStatus {
         PENDING, PICKING, PICKED
+    }
+
+    public void addItem(PickingItem item) {
+        pickingItems.add(item);
+        item.setPicking(this);
     }
 
 }

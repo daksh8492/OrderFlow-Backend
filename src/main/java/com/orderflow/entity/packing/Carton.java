@@ -43,7 +43,6 @@ public class Carton {
     private CartonStatus status;
     private Instant createdAt;
     private Instant updatedAt;
-    private Instant packedAt;
 
     @PrePersist
     void onCreate(){
@@ -51,7 +50,7 @@ public class Carton {
     }
 
     public enum CartonStatus {
-        PACKING, PACKED, DELIVERED
+        PACKED, DELIVERED
     }
 
 }

@@ -65,4 +65,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<IllegalStateException> handleIllegalStateException(IllegalStateException ex){
         return new ResponseEntity<>(ex, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PickingNotFoundException.class)
+    public ResponseEntity<PickingNotFoundException> handlePickingNotFoundException(PickingNotFoundException ex){
+        return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+    }
 }

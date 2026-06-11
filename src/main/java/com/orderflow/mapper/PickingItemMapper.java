@@ -17,8 +17,6 @@ public interface PickingItemMapper {
     PickingItemDto pickingItemToPickingItemDto(PickingItem pickingItem);
 
     @Mapping(target = "picking", ignore = true)
-    @Mapping(target = "orderItem", ignore = true)
-    @Mapping(target = "pickedFrom", ignore = true)
     PickingItem pickingItemDtoToPickingItem(PickingItemDto dto);
 
     Set<PickingItemDto> pickingItemsToPickingItemDtos(Set<PickingItem> pickingItems);

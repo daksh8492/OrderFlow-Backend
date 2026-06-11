@@ -29,7 +29,5 @@ public class PickingItem {
     private BigDecimal pickedItems;
     @ManyToOne(fetch = FetchType.LAZY)
     private WarehouseStock pickedFrom;
-    private Instant createdAt;
-    private Instant updatedAt;
 
 }

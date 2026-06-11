@@ -2,6 +2,7 @@ package com.orderflow.service;
 
 import com.orderflow.dto.OrderDto;
 import com.orderflow.dto.OrderItemDto;
+import com.orderflow.dto.OrderSummaryDto;
 import com.orderflow.entity.order.Order;
 import com.orderflow.entity.order.OrderItem;
 import com.orderflow.exceptions.*;
@@ -54,15 +55,19 @@ public class OrderService {
         order.setOrderNumber(generateOrderNumber());
         order.setCustomer(customerRepo.findById(orderDto.getCustomerId()).orElseThrow(() -> new CustomerNotFoundException("Customer Not Found")));
 
+        if (order.getStatus() == null) order.setStatus(Order.OrderStatus.PENDING);
+
+        if (order.getPaymentStatus() == null) order.setPaymentStatus(Order.PaymentStatus.PENDING);
+
         Set<OrderItem> items = orderItemMapper.orderItemDtosToOrderItems(orderDto.getItems());
 
         BigDecimal subtotal = BigDecimal.ZERO;
         BigDecimal totalDiscount = BigDecimal.ZERO;
         BigDecimal totalTax = BigDecimal.ZERO;
-
+        long count = 0;
         for (OrderItem item : items) {
             item.setVariant(variantRepo.findById(item.getVariant().getVariantId()).orElseThrow(() -> new VariantNotFoundException("Variant Not Found")));
-
+            item.setSerialId(++count);
             BigDecimal gross = item.getRate().multiply(item.getQuantity());
 
             BigDecimal disc = BigDecimal.ZERO;
@@ -145,10 +150,10 @@ public class OrderService {
             BigDecimal subtotal      = BigDecimal.ZERO;
             BigDecimal totalDiscount = BigDecimal.ZERO;
             BigDecimal totalTax      = BigDecimal.ZERO;
-
+            long count = 0;
             for (OrderItem item : order.getItems()) {
                 BigDecimal gross = item.getRate().multiply(item.getQuantity());
-
+                item.setSerialId(++count);
                 BigDecimal disc = BigDecimal.ZERO;
                 if (item.getDiscountType() != null && item.getDiscountValue() != null) disc = item.getDiscountType() == OrderItem.DiscountType.PERCENTAGE ? gross.multiply(item.getDiscountValue()).divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP) : item.getDiscountValue();
 
@@ -175,13 +180,13 @@ public class OrderService {
     }
 
     @Transactional
-    public List<OrderDto> getAllOrders() {
-        return orderMapper.ordersToOrderDtos(orderRepo.findAll());
+    public List<OrderSummaryDto> getAllOrders() {
+        return orderMapper.ordersToOrderSummaryDtos(orderRepo.findAllByOrderByOrderNumberDesc());
     }
 
     @Transactional
-    public List<OrderDto> getOrdersByCustomerId(UUID customerId) {
-        return orderMapper.ordersToOrderDtos(orderRepo.findAllByCustomer_CustomerId(customerId));
+    public List<OrderSummaryDto> getOrdersByCustomerId(UUID customerId) {
+        return orderMapper.ordersToOrderSummaryDtos(orderRepo.findAllByCustomer_CustomerId(customerId));
     }
 
     @Transactional
@@ -213,18 +218,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Set<OrderItemDto> getOrderItemsByOrderId(UUID orderId) {
-        return orderItemMapper.orderItemsToOrderItemDtos(orderItemRepo.findAllByOrder_OrderId(orderId));
+    public void deleteOrder(UUID orderId) {
+        orderRepo.deleteById(orderId);
     }
 
     @Transactional
-    public OrderItemDto getOrderItemByOrderAndItemId(UUID orderId, UUID itemId) {
-        return orderItemMapper.orderItemToOrderDto(orderItemRepo.findByOrderItemIdAndOrder_OrderId(itemId, orderId).orElseThrow(() -> new OrderItemNotFoundException("Order Item not found for this order")));
-    }
-
-    @Transactional
-    public List<OrderDto> getALlByStatus(Order.OrderStatus status) {
-        return orderMapper.ordersToOrderDtos(orderRepo.findByStatus(status));
+    public List<OrderSummaryDto> getALlByStatus(Order.OrderStatus status) {
+        return orderMapper.ordersToOrderSummaryDtos(orderRepo.findByStatus(status));
     }
 
     private String generateOrderNumber() {

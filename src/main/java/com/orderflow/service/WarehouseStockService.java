@@ -96,8 +96,7 @@ public class WarehouseStockService {
             throw new IllegalArgumentException("The Warehouses do not match");
         targetStock.setTotalQuantity(targetStock.getTotalQuantity().add(transferQuantity));
         sourceStock.setTotalQuantity(sourceStock.getTotalQuantity().subtract(transferQuantity));
-        if (sourceStock.getTotalQuantity().compareTo(BigDecimal.ZERO) <= 0) warehouseStockRepo.delete(sourceStock);
-        else warehouseStockRepo.save(sourceStock);
+        warehouseStockRepo.save(sourceStock);
         return warehouseStockMapper.warehouseStockToWarehouseStockDto(warehouseStockRepo.save(targetStock));
     }
 

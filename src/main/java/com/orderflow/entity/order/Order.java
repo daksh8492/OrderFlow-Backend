@@ -5,6 +5,7 @@ import com.orderflow.entity.user.User;
 import com.orderflow.entity.warehouse.Warehouse;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.Builder.Default;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -33,16 +34,16 @@ public class Order {
     private String receiverPhone;
     private String receiverName;
     @Enumerated(EnumType.STRING)
-    @Builder.Default
+    @Default
     private OrderStatus status = OrderStatus.PENDING;
     @Enumerated(EnumType.STRING)
     private Priority priority;
     private Instant orderDate;
     @Enumerated(EnumType.STRING)
-    @Builder.Default
+    @Default
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default
+    @Default
     private Set<OrderItem> items = new HashSet<>();
     @Column(precision = 19, scale = 4)
     private BigDecimal subtotal;
@@ -79,7 +80,7 @@ public class Order {
     }
 
     public enum OrderStatus {
-        PENDING, PROCESSING, SHIPPED, OUT_FOR_DELIVERY, DELIVERED, COMPLETED, CANCELLED, FAILED, RETURNED
+        PENDING, PROCESSING, PICKED, PACKED, SHIPPED, OUT_FOR_DELIVERY, DELIVERED, COMPLETED, CANCELLED, FAILED, RETURNED
     }
 
     public enum Priority {

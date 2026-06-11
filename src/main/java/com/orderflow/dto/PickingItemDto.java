@@ -18,5 +18,4 @@ public class PickingItemDto {
     private UUID orderItemId;
     private BigDecimal pickedItems;
     private UUID warehouseStockId;
-    private Instant createdAt;
 }

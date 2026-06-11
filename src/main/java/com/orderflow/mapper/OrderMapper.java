@@ -1,9 +1,9 @@
 package com.orderflow.mapper;
 
 import com.orderflow.dto.OrderDto;
+import com.orderflow.dto.OrderSummaryDto;
 import com.orderflow.entity.customer.Customer;
 import com.orderflow.entity.order.Order;
-import com.orderflow.entity.order.OrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -40,5 +40,10 @@ public interface OrderMapper {
         customer.setCustomerId(customerId);
         return customer;
     }
+
+    @Mapping(source = "customer.customerId", target = "customerId")
+    OrderSummaryDto orderToOrderSummaryDto(Order order);
+
+    List<OrderSummaryDto> ordersToOrderSummaryDtos(List<Order> orders);
 
 }
