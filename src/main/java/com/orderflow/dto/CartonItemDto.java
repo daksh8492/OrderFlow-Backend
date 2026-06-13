@@ -1,30 +1,22 @@
-package com.orderflow.entity.packing;
-
+package com.orderflow.dto;
 
 import com.orderflow.entity.order.OrderItem;
-import jakarta.persistence.*;
+import com.orderflow.entity.packing.Carton;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartonItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class CartonItemDto {
     private UUID cartonItemId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Carton carton;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OrderItem orderItem;
+    private UUID cartonId;
+    private UUID orderItemId;
     private BigDecimal packedQuantity;
     private Instant createdAt;
-
 }

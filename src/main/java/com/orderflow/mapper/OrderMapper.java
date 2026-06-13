@@ -14,7 +14,7 @@ import java.util.UUID;
 @Mapper(componentModel = "spring", uses = OrderItemMapper.class)
 public interface OrderMapper {
 
-    @Mapping(source = "customerId", target = "customer.customerId")
+    @Mapping(source = "customerId", target = "customer", qualifiedByName = "uuidToCustomer")
     @Mapping(target = "fulfillingWarehouse", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -23,7 +23,7 @@ public interface OrderMapper {
     @Mapping(target = "totalDiscount", ignore = true)
     @Mapping(target = "totalTax", ignore = true)
     @Mapping(target = "totalAmount", ignore = true)
-    @Mapping(target = "items", ignore = true)
+//    @Mapping(target = "items", ignore = true)
     Order orderDtoToOrder(OrderDto orderDto);
 
     @Mapping(source = "customer.customerId", target = "customerId")

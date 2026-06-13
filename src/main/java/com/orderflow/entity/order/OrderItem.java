@@ -26,6 +26,7 @@ public class OrderItem {
     private Variant variant;
     private BigDecimal rate;
     private BigDecimal quantity;
+    private BigDecimal packedQuantity = BigDecimal.ZERO;
     private BigDecimal taxRate;
     private BigDecimal taxAmount;
     @Enumerated(EnumType.STRING)

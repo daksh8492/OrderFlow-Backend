@@ -3,6 +3,7 @@ package com.orderflow.entity.shipment;
 
 import com.orderflow.entity.user.User;
 import com.orderflow.entity.packing.Carton;
+import com.orderflow.entity.warehouse.Warehouse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,8 +24,13 @@ public class Shipment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID shipmentId;
-    @OneToMany(mappedBy = "shipment", cascade = CascadeType.ALL)
+    @Column(unique = true, nullable = false)
+    private String shipmentNumber;
+    @OneToMany()
+    @JoinColumn(name = "shipment_id")
     private Set<Carton> cartons = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Warehouse warehouse;
     private String trackingNumber;
     @ManyToOne(fetch = FetchType.LAZY)
     private User shipper;
@@ -35,8 +41,22 @@ public class Shipment {
     private Instant createdAt;
     private Instant updatedAt;
 
+    public void addCarton(Carton carton){
+        cartons.add(carton);
+    }
+
+    @PrePersist
+    void onCreate() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        updatedAt = Instant.now();
+    }
 
     public enum Status {
-        DOCKING, DEPARTED, COMPLETED
+        DOCKING, IN_TRANSIT, DELIVERED
     }
 }

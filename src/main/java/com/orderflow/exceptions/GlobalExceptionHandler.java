@@ -70,4 +70,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<PickingNotFoundException> handlePickingNotFoundException(PickingNotFoundException ex){
         return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(CartonNotFoundException.class)
+    public ResponseEntity<CartonNotFoundException> handleCartonNotFoundException(CartonNotFoundException ex){
+        return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+    }
 }
