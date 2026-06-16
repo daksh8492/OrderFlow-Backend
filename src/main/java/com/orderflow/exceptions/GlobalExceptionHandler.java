@@ -75,4 +75,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CartonNotFoundException> handleCartonNotFoundException(CartonNotFoundException ex){
         return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ShipmentNotFoundException.class)
+    public ResponseEntity<ShipmentNotFoundException> handleShipmentNotFoundException(ShipmentNotFoundException ex) {
+        return new ResponseEntity<>(ex, HttpStatus.NOT_FOUND);
+    }
 }

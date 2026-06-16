@@ -17,6 +17,7 @@ import com.orderflow.repository.packing.CartonRepo;
 import com.orderflow.repository.picking.PickingRepo;
 import com.orderflow.repository.user.UserRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
+import com.orderflow.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,14 +38,21 @@ public class CartonService {
 
     @Autowired
     private OrderRepo orderRepo;
+
     @Autowired
     private PickingRepo pickingRepo;
+
     @Autowired
     private UserRepo userRepo;
+
     @Autowired
     private WarehouseRepo warehouseRepo;
+
     @Autowired
     private OrderItemRepo orderItemRepo;
+
+    @Autowired
+    private AuthUtil authUtil;
 
     @Transactional
     public CartonDto addCarton(CartonDto cartonDto) {
@@ -61,16 +69,10 @@ public class CartonService {
 
         if (!picking.getOrder().getOrderId().equals(order.getOrderId())) throw new IllegalArgumentException("Picking does not belong to the selected order");
 
-        User packer = userRepo.findById(cartonDto.getPackerId()).orElseThrow(() -> new UserNotFoundException("Packer does not exist"));
-
-        Warehouse warehouse = warehouseRepo.findById(cartonDto.getWarehouseId()).orElseThrow(() -> new WarehouseNotFoundException("Warehouse does not exist"));
-
-        if (!warehouse.getWarehouseId().equals(picking.getWarehouse().getWarehouseId())) throw new IllegalArgumentException("Warehouse does not match picking warehouse");
-
         carton.setOrder(order);
         carton.setPicking(picking);
-        carton.setPacker(packer);
-        carton.setWarehouse(warehouse);
+        carton.setPacker(authUtil.getLoggedInUser());
+        carton.setWarehouse(authUtil.getLoggedInUserWarehouse());
 
         carton.getCartonItems().clear();
 

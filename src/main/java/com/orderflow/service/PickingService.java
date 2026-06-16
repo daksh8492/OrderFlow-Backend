@@ -17,6 +17,7 @@ import com.orderflow.repository.picking.PickingRepo;
 import com.orderflow.repository.user.UserRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
 import com.orderflow.repository.warehouse.WarehouseStockRepo;
+import com.orderflow.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,34 +51,8 @@ public class PickingService {
 
     @Autowired
     private WarehouseStockService warehouseStockService;
-
-//    @Transactional
-//    public PickingDto addPicking(PickingDto pickingDto) {
-//        Picking picking = pickingMapper.pickingDtoToPicking(pickingDto);
-//
-//        if (picking.getPickingItems() == null) {
-//            picking.setPickingItems(new HashSet<>());
-//        }
-//
-//        picking.setPicker(userRepo.findById(pickingDto.getPickerId()).orElseThrow(() -> new UserNotFoundException("The picker does not exist")));
-//
-//        picking.setOrder(orderRepo.findById(pickingDto.getOrderId()).orElseThrow(() -> new OrderNotFoundException("The order does not exist")));
-//
-//        picking.setWarehouse(warehouseRepo.findById(pickingDto.getWarehouseId()).orElseThrow(() -> new WarehouseNotFoundException("The warehouse does not exist")));
-//
-//        Set<PickingItem> items = pickingItemMapper.pickingItemDtosToPickingItems(pickingDto.getPickingItems());
-//
-//        for (PickingItem item : items) {
-//            item.setPicking(picking);
-//            item.setOrderItem(orderItemRepo.findById(item.getOrderItem().getOrderItemId()).orElseThrow(() -> new OrderItemNotFoundException("The orderItem does not exist")));
-//            item.setPickedFrom(warehouseStockRepo.findById(item.getPickedFrom().getStockId()).orElseThrow(() -> new WarehouseStockNotFoundException("The warehouse stock does not exist")));
-//            picking.addItem(item);
-//        }
-//
-//        pickingRepo.save(picking);
-//        return pickingMapper.pickingToPickingDto(picking);
-//    }
-
+    @Autowired
+    private AuthUtil authUtil;
 
     @Transactional
     public PickingDto addPicking(PickingDto pickingDto) {
@@ -90,7 +65,7 @@ public class PickingService {
             picking.setPickingItems(new HashSet<>());
         }
 
-        picking.setPicker(userRepo.findById(pickingDto.getPickerId()).orElseThrow(() -> new UserNotFoundException("The picker does not exist")));
+        picking.setPicker(authUtil.getLoggedInUser());
 
         Order order = orderRepo.findById(pickingDto.getOrderId()).orElseThrow(() -> new OrderNotFoundException("The order does not exist"));
 
@@ -98,7 +73,7 @@ public class PickingService {
 
         picking.setOrder(order);
 
-        Warehouse warehouse = warehouseRepo.findById(pickingDto.getWarehouseId()).orElseThrow(() -> new WarehouseNotFoundException("The warehouse does not exist"));
+        Warehouse warehouse = authUtil.getLoggedInUserWarehouse();
 
         picking.setWarehouse(warehouse);
 
@@ -167,7 +142,6 @@ public class PickingService {
         validatePickedQuantities(pickingDto);
 
         Picking picking = pickingRepo.findById(pickingId).orElseThrow(() -> new PickingNotFoundException("Picking not found"));
-
         picking.setPicker(userRepo.findById(pickingDto.getPickerId()).orElseThrow(() -> new UserNotFoundException("Picker not found")));
         picking.setOrder(orderRepo.findById(pickingDto.getOrderId()).orElseThrow(() -> new OrderNotFoundException("Order not found")));
         if (pickingRepo.existsByOrder_OrderId(pickingDto.getOrderId())) throw new IllegalArgumentException("A picking record already exists for this order");

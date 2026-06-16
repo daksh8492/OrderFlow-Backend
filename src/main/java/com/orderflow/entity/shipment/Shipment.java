@@ -45,6 +45,10 @@ public class Shipment {
         cartons.add(carton);
     }
 
+    public void removeCarton(Carton carton){
+        cartons.remove(carton);
+    }
+
     @PrePersist
     void onCreate() {
         createdAt = Instant.now();

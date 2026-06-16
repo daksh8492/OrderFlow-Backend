@@ -41,7 +41,7 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrdersByCustomerId(customerId), HttpStatus.OK);
     }
 
-    @GetMapping("/order_number/{orderNumber}")
+    @GetMapping("/order-number/{orderNumber}")
     public ResponseEntity<OrderDto> getOrderByOrderNumber(@PathVariable String orderNumber) {
         return new ResponseEntity<>(orderService.getOrderbyOrderNumber(orderNumber), HttpStatus.OK);
     }
@@ -61,7 +61,7 @@ public class OrderController {
         return new ResponseEntity<>(orderService.updateStatus(orderId, status), HttpStatus.OK);
     }
 
-    @PatchMapping("/{orderId}/payment_status/{status}")
+    @PatchMapping("/{orderId}/payment-status/{status}")
     public ResponseEntity<OrderDto> updatePaymentStatus(@PathVariable UUID orderId, @PathVariable Order.PaymentStatus status) {
         return new ResponseEntity<>(orderService.updatePaymentStatus(orderId, status), HttpStatus.OK);
     }
@@ -75,6 +75,11 @@ public class OrderController {
     public ResponseEntity<?> deleteOrder(@PathVariable UUID orderId) {
         orderService.deleteOrder(orderId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{orderId}/assign-warehouse/{warehouseId}")
+    public ResponseEntity<OrderDto> assignWarehouse(@PathVariable UUID orderId, @PathVariable UUID warehouseId) {
+        return new ResponseEntity<>(orderService.assignWarehouse(orderId, warehouseId), HttpStatus.OK);
     }
 
 }
