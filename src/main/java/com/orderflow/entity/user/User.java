@@ -25,6 +25,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FieldOfWork fieldOfWork;
+    private String password;
     @ManyToOne(fetch = FetchType.LAZY)
     private Warehouse userWarehouse;
     private String address;
@@ -40,6 +41,7 @@ public class User {
 
     @PrePersist
     void onCreate(){
+        active = true;
         createdAt = Instant.now();
         updatedAt = Instant.now();
     }
@@ -47,10 +49,6 @@ public class User {
     @PreUpdate
     void onUpdate(){
         updatedAt = Instant.now();
-    }
-
-    public enum FieldOfWork{
-        ORDER_PROCESSOR, WAREHOUSE_WORKER, DRIVER, ADMIN
     }
 
 }

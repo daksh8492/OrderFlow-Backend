@@ -1,6 +1,7 @@
 package com.orderflow.service;
 
 import com.orderflow.dto.UserDto;
+import com.orderflow.entity.user.FieldOfWork;
 import com.orderflow.entity.user.User;
 import com.orderflow.entity.warehouse.Warehouse;
 import com.orderflow.exceptions.UserNotFoundException;
@@ -9,6 +10,7 @@ import com.orderflow.mapper.UserMapper;
 import com.orderflow.repository.user.UserRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -25,6 +27,8 @@ public class UserService {
     private UserMapper userMapper;
     @Autowired
     private WarehouseRepo warehouseRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserDto addUser(UserDto userDto){
         User user = userMapper.dtoToUser(userDto);
@@ -37,6 +41,7 @@ public class UserService {
             count++;
         }while (userRepo.existsByCode(code));
         user.setCode(code);
+        user.setPassword(passwordEncoder.encode(code));
         return userMapper.userToUserDto(userRepo.save(user));
     }
 
@@ -49,7 +54,7 @@ public class UserService {
         return userMapper.userToUserDto(user.orElseThrow( () -> new UserNotFoundException("User not found")));
     }
 
-    public List<UserDto> getUserByFieldOfWork(User.FieldOfWork fieldOfWork){
+    public List<UserDto> getUserByFieldOfWork(FieldOfWork fieldOfWork){
         List<User> users = userRepo.findByFieldOfWork(fieldOfWork);
         return userMapper.usersToUserDtos(users);
     }

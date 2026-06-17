@@ -1,6 +1,7 @@
 package com.orderflow.controller;
 
 import com.orderflow.dto.UserDto;
+import com.orderflow.entity.user.FieldOfWork;
 import com.orderflow.entity.user.User;
 import com.orderflow.mapper.UserMapper;
 import com.orderflow.service.UserService;
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @GetMapping("fieldOfWork/{fieldOfWork}")
-    public ResponseEntity<List<UserDto>> getUserByFieldOfWork(@PathVariable User.FieldOfWork fieldOfWork){
+    public ResponseEntity<List<UserDto>> getUserByFieldOfWork(@PathVariable FieldOfWork fieldOfWork){
         List<UserDto> users = userService.getUserByFieldOfWork(fieldOfWork);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }

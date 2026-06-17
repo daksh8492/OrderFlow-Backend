@@ -1,5 +1,6 @@
 package com.orderflow.repository.user;
 
+import com.orderflow.entity.user.FieldOfWork;
 import com.orderflow.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.UUID;
 public interface UserRepo extends JpaRepository<User, UUID> {
     Optional<User> findByCode(String code);
 
-    List<User> findByFieldOfWork(User.FieldOfWork fieldOfWork);
+    List<User> findByFieldOfWork(FieldOfWork fieldOfWork);
 
     boolean existsByCode(String code);
 }

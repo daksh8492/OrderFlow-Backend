@@ -1,5 +1,6 @@
 package com.orderflow.dto;
 
+import com.orderflow.entity.user.FieldOfWork;
 import com.orderflow.entity.user.User;
 import lombok.*;
 import java.math.BigDecimal;
@@ -16,7 +17,8 @@ public class UserDto {
     private UUID userId;
     private String name;
     private String code;
-    private User.FieldOfWork fieldOfWork;
+    private FieldOfWork fieldOfWork;
+    private String password;
     private UUID warehouseId;
     private String address;
     private String city;
