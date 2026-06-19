@@ -8,6 +8,7 @@ import org.aspectj.weaver.patterns.ITokenSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,12 +16,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/items")
+@PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
 public class ItemController {
 
     @Autowired
     private ItemService itemService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
     public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto){
         return new ResponseEntity<>(itemService.addItem(itemDto), HttpStatus.CREATED);
     }
@@ -36,42 +39,47 @@ public class ItemController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
     public ResponseEntity<ItemDto> updateItem(@PathVariable UUID id, @RequestBody ItemDto itemDto){
         return new ResponseEntity<>(itemService.updateItem(id, itemDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> deleteItem(@PathVariable UUID id){
         itemService.deleteItem(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/{id}/activate")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
     public ResponseEntity<ItemDto> activateItem(@PathVariable UUID id){
         return new ResponseEntity<>(itemService.activateItem(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/deactivate")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
     public ResponseEntity<ItemDto> deactivateItem(@PathVariable UUID id){
         return new ResponseEntity<>(itemService.deactivateItem(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/discontinue")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
     public ResponseEntity<ItemDto> discontinueItem(@PathVariable UUID id){
         return new ResponseEntity<>(itemService.discontinueItem(id), HttpStatus.OK);
     }
 
-    @PutMapping("/category/{category}")
+    @GetMapping("/category/{category}")
     public ResponseEntity<List<ItemDto>> getItemsByCategory(@PathVariable Item.ItemCategory category){
         return new ResponseEntity<>(itemService.getItemsByCategory(category), HttpStatus.OK);
     }
 
-    @PutMapping("/status/{status}")
+    @GetMapping("/status/{status}")
     public ResponseEntity<List<ItemDto>> getItemByStatus(@PathVariable Item.ItemStatus status){
         return new ResponseEntity<>(itemService.getItemsByStatus(status), HttpStatus.OK);
     }
 
-    @PutMapping("/source/{source}")
+    @GetMapping("/source/{source}")
     public ResponseEntity<List<ItemDto>> getItemBySource(@PathVariable Item.InwardSource source){
         return new ResponseEntity<>(itemService.getItemsBySource(source), HttpStatus.OK);
     }

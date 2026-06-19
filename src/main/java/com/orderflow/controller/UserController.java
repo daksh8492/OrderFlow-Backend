@@ -2,13 +2,12 @@ package com.orderflow.controller;
 
 import com.orderflow.dto.UserDto;
 import com.orderflow.entity.user.FieldOfWork;
-import com.orderflow.entity.user.User;
 import com.orderflow.mapper.UserMapper;
 import com.orderflow.service.UserService;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/users")
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     @Autowired

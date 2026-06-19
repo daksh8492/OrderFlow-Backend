@@ -6,6 +6,7 @@ import com.orderflow.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/customers")
+@PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
 public class CustomerController {
 
     @Autowired
@@ -44,6 +46,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> deleteCustomer(@PathVariable UUID id){
         customerService.deleteCustomer(id);
         return new ResponseEntity<>(HttpStatus.OK);

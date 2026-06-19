@@ -6,6 +6,7 @@ import com.orderflow.service.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/warehouses")
+@PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
 public class WarehouseController {
 
     @Autowired
@@ -24,16 +26,19 @@ public class WarehouseController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<List<WarehouseDto>> getAllWarehouses(){
         return new ResponseEntity<>(warehouseService.getAllWarehouses(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR','DRIVER')")
     public ResponseEntity<WarehouseDto> getWarehouseById(@PathVariable UUID id){
         return new ResponseEntity<>(warehouseService.getWarehouseById(id), HttpStatus.OK);
     }
 
     @GetMapping("/code/{code}")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<WarehouseDto> getWarehouseByCode(@PathVariable String code){
         return new ResponseEntity<>(warehouseService.getWarehouseByCode(code), HttpStatus.OK);
     }
@@ -44,6 +49,7 @@ public class WarehouseController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> deleteWarehouse(@PathVariable UUID id){
         warehouseService.deleteWarehouse(id);
         return new ResponseEntity<>(HttpStatus.OK);

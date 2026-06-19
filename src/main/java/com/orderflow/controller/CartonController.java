@@ -5,6 +5,7 @@ import com.orderflow.service.CartonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +13,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cartons")
+@PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
 public class CartonController {
 
     @Autowired
     private CartonService cartonService;
 
     @PostMapping()
+    @PreAuthorize("hasAnyRole('ADMIN', 'WAREHOUSE_OPERATOR')")
     public ResponseEntity<CartonDto> addCarton(@RequestBody CartonDto cartonDto) {
         return new ResponseEntity<>(cartonService.addCarton(cartonDto), HttpStatus.CREATED);
     }
@@ -53,6 +56,7 @@ public class CartonController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WAREHOUSE_OPERATOR')")
     public ResponseEntity<CartonDto> updateCarton(@PathVariable UUID id, @RequestBody CartonDto cartonDto) {
         return new ResponseEntity<>(cartonService.updateCarton(id, cartonDto), HttpStatus.OK);
     }

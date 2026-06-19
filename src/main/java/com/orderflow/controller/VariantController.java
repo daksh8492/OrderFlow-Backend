@@ -6,6 +6,7 @@ import com.orderflow.service.VariantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/variants")
+@PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
 public class VariantController {
 
     @Autowired
@@ -24,11 +26,13 @@ public class VariantController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<List<VariantDto>> getAllVariants(){
         return new ResponseEntity<>(variantService.getAllVariants(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<VariantDto> getVariantById(@PathVariable UUID id){
         //Avail qty will be implemented later after picking module
         return new ResponseEntity<>(variantService.getVariantById(id), HttpStatus.OK);
@@ -40,22 +44,26 @@ public class VariantController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<HttpStatus> deleteVariant(@PathVariable UUID id){
         variantService.deleteVariant(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/sku/{sku}")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<VariantDto> getVariantBySku(@PathVariable String sku){
         return new ResponseEntity<>(variantService.getVariantBySku(sku), HttpStatus.OK);
     }
 
     @GetMapping("/barcode/{barcode}")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<VariantDto> getVariantByBarcode(@PathVariable String barcode){
         return new ResponseEntity<>(variantService.getVariantByBarcode(barcode), HttpStatus.OK);
     }
 
     @GetMapping("/item/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<List<VariantDto>> getVariantsByItemId(@PathVariable UUID id){
         return new ResponseEntity<>(variantService.getVariantsByItemId(id), HttpStatus.OK);
     }
@@ -71,6 +79,7 @@ public class VariantController {
     }
 
     @PatchMapping("/{id}/discontinue")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<VariantDto> discontinueVariant(@PathVariable UUID id){
         return new ResponseEntity<>(variantService.discontinueVariant(id), HttpStatus.OK);
     }

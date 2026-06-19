@@ -7,6 +7,7 @@ import com.orderflow.service.WarehouseLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +15,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/locations")
+@PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
 public class WarehouseLocationController {
 
     @Autowired
     private WarehouseLocationService warehouseLocationService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','WAREHOUSE_OPERATOR')")
     public ResponseEntity<WarehouseLocationDto> addWarehouseLocation(@RequestBody WarehouseLocationDto warehouseLocationDto){
         return new ResponseEntity<>(warehouseLocationService.addWarehouseLocation(warehouseLocationDto), HttpStatus.CREATED);
     }
@@ -46,11 +49,13 @@ public class WarehouseLocationController {
     }
 
     @PutMapping("/{id}/activate")
+    @PreAuthorize("hasAnyRole('ADMIN','WAREHOUSE_OPERATOR')")
     public ResponseEntity<WarehouseLocationDto> activateWarehouseLocation(@PathVariable UUID id){
         return new ResponseEntity<>(warehouseLocationService.activateWarehouseLocationById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/deactivate")
+    @PreAuthorize("hasAnyRole('ADMIN','WAREHOUSE_OPERATOR')")
     public ResponseEntity<WarehouseLocationDto> deactivateWarehouseLocation(@PathVariable UUID id){
         return new ResponseEntity<>(warehouseLocationService.deactivateWarehouseLocationById(id), HttpStatus.OK);
     }

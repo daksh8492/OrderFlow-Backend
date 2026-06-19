@@ -1,7 +1,8 @@
 package com.orderflow.entity.user;
 
 public enum FieldOfWork {
-
-    ORDER_PROCESSOR, WAREHOUSE_WORKER, DRIVER, ADMIN
-
+    ADMIN,
+    INVENTORY_MANAGER,
+    WAREHOUSE_OPERATOR,
+    DRIVER
 }

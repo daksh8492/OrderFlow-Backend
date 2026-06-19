@@ -6,6 +6,7 @@ import com.orderflow.service.PickingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,12 +14,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/pickings")
+@PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
 public class PickingController {
 
     @Autowired
     private PickingService pickingService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'WAREHOUSE_OPERATOR')")
     public ResponseEntity<PickingDto> addPicking(@RequestBody PickingDto pickingDto) {
         return new ResponseEntity<>(pickingService.addPicking(pickingDto), HttpStatus.CREATED);
     }
@@ -49,6 +52,7 @@ public class PickingController {
     }
 
     @PutMapping("/{pickingId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'WAREHOUSE_OPERATOR')")
     public ResponseEntity<PickingDto> updatePicking(@PathVariable UUID pickingId, @RequestBody PickingDto pickingDto) {
         return new ResponseEntity<>(pickingService.updatePicking(pickingId, pickingDto), HttpStatus.OK);
     }
