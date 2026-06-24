@@ -8,6 +8,8 @@ import com.orderflow.mapper.ItemMapper;
 import com.orderflow.repository.product.ItemRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,10 +27,6 @@ public class ItemService {
         Item item = itemMapper.itemDtoToItem(itemDto);
         if (item.getStatus() == null) item.setStatus(Item.ItemStatus.DRAFT);
         return itemMapper.itemToItemDto(itemRepo.save(item));
-    }
-
-    public List<ItemDto> getAllItems() {
-        return itemMapper.itemsToItemDtos(itemRepo.findAll());
     }
 
     public ItemDto getItemById(UUID id) {
@@ -67,16 +65,20 @@ public class ItemService {
         return itemMapper.itemToItemDto(itemRepo.save(item));
     }
 
-    public List<ItemDto> getItemsByCategory(Item.ItemCategory category) {
-        return itemMapper.itemsToItemDtos(itemRepo.findByCategory(category));
+    public Page<ItemDto> getAllItems(Pageable pageable) {
+        return itemRepo.findAll(pageable).map(itemMapper::itemToItemDto);
     }
 
-    public List<ItemDto> getItemsByStatus(Item.ItemStatus status) {
-        return itemMapper.itemsToItemDtos(itemRepo.findByStatus(status));
+    public Page<ItemDto> getItemsByCategory(Item.ItemCategory category, Pageable pageable) {
+        return itemRepo.findByCategory(category, pageable).map(itemMapper::itemToItemDto);
     }
 
-    public List<ItemDto> getItemsBySource(Item.InwardSource source) {
-        return itemMapper.itemsToItemDtos(itemRepo.findBySourceType(source));
+    public Page<ItemDto> getItemsByStatus(Item.ItemStatus status, Pageable pageable) {
+        return itemRepo.findByStatus(status, pageable).map(itemMapper::itemToItemDto);
+    }
+
+    public Page<ItemDto> getItemsBySource(Item.InwardSource source, Pageable pageable) {
+        return itemRepo.findBySourceType(source, pageable).map(itemMapper::itemToItemDto);
     }
 
 

@@ -4,6 +4,8 @@ import com.orderflow.entity.product.Variant;
 import com.orderflow.entity.warehouse.Warehouse;
 import com.orderflow.entity.warehouse.WarehouseLocation;
 import com.orderflow.entity.warehouse.WarehouseStock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +19,9 @@ public interface WarehouseStockRepo extends JpaRepository<WarehouseStock, UUID> 
 
     Optional<WarehouseStock> findByVariantAndWarehouseLocation(Variant variant, WarehouseLocation warehouseLocation);
 
-    List<WarehouseStock> findByWarehouseLocation(WarehouseLocation warehouseLocation);
+    Page<WarehouseStock> findByWarehouseLocation(WarehouseLocation warehouseLocation, Pageable pageable);
+
+    Page<WarehouseStock> findByVariantAndWarehouse(Variant variant, Warehouse warehouse, Pageable pageable);
 
     List<WarehouseStock> findByVariantAndWarehouse(Variant variant, Warehouse warehouse);
 }

@@ -11,6 +11,8 @@ import com.orderflow.mapper.WarehouseMapper;
 import com.orderflow.repository.warehouse.WarehouseLocationRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -76,16 +78,8 @@ public class WarehouseLocationService {
         return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.save(warehouseLocation));
     }
 
-    public List<WarehouseLocationDto> getAllWarehouseLocations() {
-        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAll());
-    }
-
     public WarehouseLocationDto getWarehouseLocationById(UUID id) {
         return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.findById(id).orElseThrow(() -> new WarehouseLocationNotFoundException("Warehouse location not found")));
-    }
-
-    public List<WarehouseLocationDto> getAllLocationsFromWarehouse(UUID id) {
-        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findByWarehouse_WarehouseId(id));
     }
 
     public void deleteWarehouseLocationById(UUID id) {
@@ -105,12 +99,36 @@ public class WarehouseLocationService {
         return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.save(warehouseLocation));
     }
 
-    public List<WarehouseLocationDto> getChildrenLocations(UUID id){
-        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAllByParentLocation_LocationId(id));
+    public Page<WarehouseLocationDto> getAllWarehouseLocations(Pageable pageable) {
+        return warehouseLocationRepo.findAll(pageable)
+                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
     }
 
-    public List<WarehouseLocationDto> getAllLocationFromType(WarehouseLocation.WarehouseLocationType type){
-        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAllByLocationType(type));
+    public Page<WarehouseLocationDto> getAllLocationsFromWarehouse(
+            UUID id,
+            Pageable pageable) {
+
+        return warehouseLocationRepo
+                .findByWarehouse_WarehouseId(id, pageable)
+                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
+    }
+
+    public Page<WarehouseLocationDto> getChildrenLocations(
+            UUID id,
+            Pageable pageable) {
+
+        return warehouseLocationRepo
+                .findAllByParentLocation_LocationId(id, pageable)
+                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
+    }
+
+    public Page<WarehouseLocationDto> getAllLocationFromType(
+            WarehouseLocation.WarehouseLocationType type,
+            Pageable pageable) {
+
+        return warehouseLocationRepo
+                .findAllByLocationType(type, pageable)
+                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
     }
 }
 

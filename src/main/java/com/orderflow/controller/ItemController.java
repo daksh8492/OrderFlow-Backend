@@ -6,6 +6,9 @@ import com.orderflow.mapper.ItemMapper;
 import com.orderflow.service.ItemService;
 import org.aspectj.weaver.patterns.ITokenSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,11 +29,6 @@ public class ItemController {
     @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER')")
     public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto){
         return new ResponseEntity<>(itemService.addItem(itemDto), HttpStatus.CREATED);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ItemDto>> getAllItems(){
-        return new ResponseEntity<>(itemService.getAllItems(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -69,19 +67,24 @@ public class ItemController {
         return new ResponseEntity<>(itemService.discontinueItem(id), HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<ItemDto>> getAllItems(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(itemService.getAllItems(pageable));
+    }
+
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<ItemDto>> getItemsByCategory(@PathVariable Item.ItemCategory category){
-        return new ResponseEntity<>(itemService.getItemsByCategory(category), HttpStatus.OK);
+    public ResponseEntity<Page<ItemDto>> getItemsByCategory(@PathVariable Item.ItemCategory category, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(itemService.getItemsByCategory(category, pageable));
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<ItemDto>> getItemByStatus(@PathVariable Item.ItemStatus status){
-        return new ResponseEntity<>(itemService.getItemsByStatus(status), HttpStatus.OK);
+    public ResponseEntity<Page<ItemDto>> getItemByStatus(@PathVariable Item.ItemStatus status, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(itemService.getItemsByStatus(status, pageable));
     }
 
     @GetMapping("/source/{source}")
-    public ResponseEntity<List<ItemDto>> getItemBySource(@PathVariable Item.InwardSource source){
-        return new ResponseEntity<>(itemService.getItemsBySource(source), HttpStatus.OK);
+    public ResponseEntity<Page<ItemDto>> getItemBySource(@PathVariable Item.InwardSource source, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(itemService.getItemsBySource(source, pageable));
     }
 
 

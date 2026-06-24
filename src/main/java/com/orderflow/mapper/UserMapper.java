@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface UserMapper {
 
     @Mapping(source = "userWarehouse.warehouseId", target = "warehouseId")
+    @Mapping(target = "password", ignore = true)
     UserDto userToUserDto(User user);
 
     @Mapping(source = "warehouseId", target = "userWarehouse", qualifiedByName = "uuidToWarehouse")

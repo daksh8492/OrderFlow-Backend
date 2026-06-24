@@ -3,6 +3,9 @@ package com.orderflow.controller;
 import com.orderflow.dto.ShipmentDto;
 import com.orderflow.service.ShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +30,8 @@ public class ShipmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ShipmentDto>> getAllShipments() {
-        return new ResponseEntity<>(shipmentService.getAllShipments(), HttpStatus.OK);
+    public ResponseEntity<Page<ShipmentDto>> getAllShipments(@PageableDefault(size = 20) Pageable pageable) {
+        return new ResponseEntity<>(shipmentService.getAllShipments(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{shipmentId}")

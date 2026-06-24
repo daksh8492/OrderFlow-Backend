@@ -5,12 +5,14 @@ import com.orderflow.dto.OrderSummaryDto;
 import com.orderflow.entity.order.Order;
 import com.orderflow.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,8 +30,8 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
-    public ResponseEntity<List<OrderSummaryDto>> getAllOrders() {
-        return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
+    public ResponseEntity<Page<OrderSummaryDto>> getAllOrders(@PageableDefault(size = 20)Pageable pageable) {
+        return new ResponseEntity<>(orderService.getAllOrders(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -39,8 +41,8 @@ public class OrderController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<OrderSummaryDto>> getOrdersByCustomerId(@PathVariable UUID customerId) {
-        return new ResponseEntity<>(orderService.getOrdersByCustomerId(customerId), HttpStatus.OK);
+    public ResponseEntity<Page<OrderSummaryDto>> getOrdersByCustomerId(@PathVariable UUID customerId, @PageableDefault(size = 20) Pageable pageable) {
+        return new ResponseEntity<>(orderService.getOrdersByCustomerId(customerId, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/order-number/{orderNumber}")
@@ -51,8 +53,8 @@ public class OrderController {
 
     @GetMapping("/status/{status}")
     @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
-    public ResponseEntity<List<OrderSummaryDto>> getOrdersByStatus(@PathVariable Order.OrderStatus status) {
-        return new ResponseEntity<>(orderService.getALlByStatus(status), HttpStatus.OK);
+    public ResponseEntity<Page<OrderSummaryDto>> getOrdersByStatus(@PathVariable Order.OrderStatus status, @PageableDefault(size = 20) Pageable pageable) {
+        return new ResponseEntity<>(orderService.getALlByStatus(status, pageable), HttpStatus.OK);
     }
 
     @PutMapping("/{orderId}")

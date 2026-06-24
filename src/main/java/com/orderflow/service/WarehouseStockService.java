@@ -16,6 +16,8 @@ import com.orderflow.repository.warehouse.WarehouseLocationRepo;
 import com.orderflow.repository.warehouse.WarehouseStockRepo;
 import com.orderflow.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,15 +108,17 @@ public class WarehouseStockService {
     }
 
     @Transactional
-    public List<WarehouseStockDto> getWarehouseStockByLocation(UUID locationId) {
-        return warehouseStockMapper.warehouseStocksToWarehouseStockDtos(warehouseStockRepo.findByWarehouseLocation(warehouseLocationRepo.findById(locationId).orElseThrow(() -> new WarehouseLocationNotFoundException("Location does not exist"))));
+    public Page<WarehouseStockDto> getWarehouseStockByLocation(UUID locationId, Pageable pageable) {
+//        return warehouseStockMapper.warehouseStocksToWarehouseStockDtos(warehouseStockRepo.findByWarehouseLocation(warehouseLocationRepo.findById(locationId).orElseThrow(() -> new WarehouseLocationNotFoundException("Location does not exist"))));
+        return warehouseStockRepo.findByWarehouseLocation(warehouseLocationRepo.findById(locationId).orElseThrow( () -> new WarehouseLocationNotFoundException("Location does not exist")), pageable).map(warehouseStockMapper::warehouseStockToWarehouseStockDto);
     }
 
     @Transactional
-    public List<WarehouseStockDto> getWarehouseStockByVariant(UUID variantId) {
+    public Page<WarehouseStockDto> getWarehouseStockByVariant(UUID variantId, Pageable pageable) {
         Warehouse warehouse = authUtil.getLoggedInUserWarehouse();
         Variant variant = variantRepo.findById(variantId).orElseThrow(() -> new VariantNotFoundException("Variant does not exist"));
-        return warehouseStockMapper.warehouseStocksToWarehouseStockDtos(warehouseStockRepo.findByVariantAndWarehouse(variant, warehouse));
+//        return warehouseStockMapper.warehouseStocksToWarehouseStockDtos(warehouseStockRepo.findByVariantAndWarehouse(variant, warehouse));
+        return warehouseStockRepo.findByVariantAndWarehouse(variant, warehouse, pageable).map(warehouseStockMapper::warehouseStockToWarehouseStockDto);
     }
 
     public void deleteWarehouseStock(UUID warehouseStockId) {

@@ -8,6 +8,8 @@ import com.orderflow.mapper.VendorMapper;
 import com.orderflow.repository.vendor.VendorRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +36,9 @@ public class VendorService {
         return vendorMapper.vendorToVendorDto(vendorRepo.save(vendor));
     }
 
-    public List<VendorDto> getAllVendors(){return vendorMapper.vendorsToVendorDtos(vendorRepo.findAll());}
+    public Page<VendorDto> getAllVendors(Pageable pageable) {
+        return vendorRepo.findAll(pageable).map(vendorMapper::vendorToVendorDto);
+    }
 
     public VendorDto getVendorByCode(String code){
         Optional<Vendor> vendor = vendorRepo.findByVendorCode(code);

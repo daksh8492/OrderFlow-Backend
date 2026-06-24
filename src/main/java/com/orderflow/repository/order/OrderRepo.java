@@ -1,6 +1,8 @@
 package com.orderflow.repository.order;
 
 import com.orderflow.entity.order.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,13 +12,13 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepo extends JpaRepository<Order, UUID> {
-    List<Order> findAllByCustomer_CustomerId(UUID customerCustomerId);
+    Page<Order> findAllByCustomer_CustomerId(UUID customerCustomerId, Pageable pageable);
 
     Optional<Order> findByOrderNumber(String orderNumber);
 
     Optional<Order> findTopByOrderByOrderNumberDesc();
 
-    List<Order> findAllByOrderByOrderNumberDesc();
+    Page<Order> findAllByOrderByOrderNumberDesc(Pageable pageable);
 
-    List<Order> findByStatus(Order.OrderStatus status);
+    Page<Order> findByStatus(Order.OrderStatus status, Pageable pageable);
 }

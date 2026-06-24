@@ -19,6 +19,8 @@ import com.orderflow.repository.warehouse.WarehouseRepo;
 import com.orderflow.repository.warehouse.WarehouseStockRepo;
 import com.orderflow.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,8 +114,8 @@ public class PickingService {
     }
 
     @Transactional
-    public List<PickingSummaryDto> getAllPickings() {
-        return pickingMapper.pickingsToPickingSummaryDtos(pickingRepo.findAll());
+    public Page<PickingSummaryDto> getAllPickings(Pageable pageable) {
+        return pickingRepo.findAll(pageable).map(pickingMapper::pickingToPickingSummaryDto);
     }
 
     @Transactional
@@ -127,13 +129,13 @@ public class PickingService {
     }
 
     @Transactional
-    public List<PickingSummaryDto> getPickingByPicker(UUID pickerId) {
-        return pickingMapper.pickingsToPickingSummaryDtos(pickingRepo.findByPicker_UserId(pickerId));
+    public Page<PickingSummaryDto> getPickingByPicker(UUID pickerId, Pageable pageable) {
+        return pickingRepo.findByPicker_UserId(pickerId, pageable).map(pickingMapper::pickingToPickingSummaryDto);
     }
 
     @Transactional
-    public List<PickingSummaryDto> getPickingByWarehouse(UUID warehouseId) {
-        return pickingMapper.pickingsToPickingSummaryDtos(pickingRepo.findByWarehouse_WarehouseId((warehouseId)));
+    public Page<PickingSummaryDto> getPickingByWarehouse(UUID warehouseId, Pageable pageable) {
+        return pickingRepo.findByWarehouse_WarehouseId(warehouseId, pageable).map(pickingMapper::pickingToPickingSummaryDto);
     }
 
     @Transactional

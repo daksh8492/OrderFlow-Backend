@@ -19,6 +19,8 @@ import com.orderflow.repository.user.UserRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
 import com.orderflow.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,11 +65,13 @@ public class CartonService {
 
         Order order = orderRepo.findById(cartonDto.getOrderId()).orElseThrow(() -> new OrderNotFoundException("Order does not exist"));
 
-        if (order.getStatus() != Order.OrderStatus.PICKED) throw new IllegalArgumentException("Order must be PICKED before packing");
+        if (order.getStatus() != Order.OrderStatus.PICKED)
+            throw new IllegalArgumentException("Order must be PICKED before packing");
 
         Picking picking = pickingRepo.findById(cartonDto.getPickingId()).orElseThrow(() -> new PickingNotFoundException("Picking does not exist"));
 
-        if (!picking.getOrder().getOrderId().equals(order.getOrderId())) throw new IllegalArgumentException("Picking does not belong to the selected order");
+        if (!picking.getOrder().getOrderId().equals(order.getOrderId()))
+            throw new IllegalArgumentException("Picking does not belong to the selected order");
 
         carton.setOrder(order);
         carton.setPicking(picking);
@@ -109,33 +113,33 @@ public class CartonService {
     }
 
     @Transactional
-    public List<CartonDto> getAllCartons() {
-        return cartonMapper.cartonsToCartonDtos(cartonRepo.findAllByOrderByCreatedAtDesc());
-    }
-
-    @Transactional
     public CartonDto getCartonById(UUID cartonId) {
         return cartonMapper.cartonToCartonDto(cartonRepo.findById(cartonId).orElseThrow(() -> new CartonNotFoundException("The carton record does not exist")));
     }
 
     @Transactional
-    public List<CartonDto> getCartonsByOrderId(UUID orderId) {
-        return cartonMapper.cartonsToCartonDtos(cartonRepo.findAllByOrder_OrderId(orderId));
+    public Page<CartonDto> getAllCartons(Pageable pageable) {
+        return cartonRepo.findAllByOrderByCreatedAtDesc(pageable).map(cartonMapper::cartonToCartonDto);
     }
 
     @Transactional
-    public List<CartonDto> getCartonsByPackerId(UUID packerId){
-        return cartonMapper.cartonsToCartonDtos(cartonRepo.findAllByPacker_UserId(packerId));
+    public Page<CartonDto> getCartonsByOrderId(UUID orderId, Pageable pageable) {
+        return cartonRepo.findAllByOrder_OrderId(orderId, pageable).map(cartonMapper::cartonToCartonDto);
     }
 
     @Transactional
-    public List<CartonDto> getCartonsByWarehouseId(UUID warehouseId){
-        return cartonMapper.cartonsToCartonDtos(cartonRepo.findALlByWarehouse_WarehouseId(warehouseId));
+    public Page<CartonDto> getCartonsByPackerId(UUID packerId, Pageable pageable) {
+        return cartonRepo.findAllByPacker_UserId(packerId, pageable).map(cartonMapper::cartonToCartonDto);
     }
 
     @Transactional
-    public List<CartonDto> getCartonsByPickingId(UUID pickingId){
-        return cartonMapper.cartonsToCartonDtos(cartonRepo.findAllByPicking_PickingId(pickingId));
+    public Page<CartonDto> getCartonsByWarehouseId(UUID warehouseId, Pageable pageable) {
+        return cartonRepo.findALlByWarehouse_WarehouseId(warehouseId, pageable).map(cartonMapper::cartonToCartonDto);
+    }
+
+    @Transactional
+    public Page<CartonDto> getCartonsByPickingId(UUID pickingId, Pageable pageable) {
+        return cartonRepo.findAllByPicking_PickingId(pickingId, pageable).map(cartonMapper::cartonToCartonDto);
     }
 
     @Transactional
@@ -241,7 +245,7 @@ public class CartonService {
         return String.format("CTN-%04d", nextNumber);
     }
 
-    private void updateOrderPackingStatus(Order order){
+    private void updateOrderPackingStatus(Order order) {
         boolean fullyPacked = true;
 
         for (OrderItem item : order.getItems()) {

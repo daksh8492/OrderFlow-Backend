@@ -3,6 +3,9 @@ package com.orderflow.controller;
 import com.orderflow.dto.WarehouseStockDto;
 import com.orderflow.service.WarehouseStockService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,13 +47,13 @@ public class WarehouseStockController {
     }
 
     @GetMapping("/location/{id}")
-    public ResponseEntity<List<WarehouseStockDto>> getStockByLocation(@PathVariable UUID id){
-        return new ResponseEntity<>(warehouseStockService.getWarehouseStockByLocation(id), HttpStatus.OK);
+    public ResponseEntity<Page<WarehouseStockDto>> getStockByLocation(@PathVariable UUID id, @PageableDefault(size = 20)Pageable pageable){
+        return new ResponseEntity<>(warehouseStockService.getWarehouseStockByLocation(id, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/variant/{id}")
-    public ResponseEntity<List<WarehouseStockDto>> getStockByVariant(@PathVariable UUID id){
-        return new ResponseEntity<>(warehouseStockService.getWarehouseStockByVariant(id), HttpStatus.OK);
+    public ResponseEntity<Page<WarehouseStockDto>> getStockByVariant(@PathVariable UUID id, @PageableDefault(size = 20) Pageable pageable){
+        return new ResponseEntity<>(warehouseStockService.getWarehouseStockByVariant(id, pageable), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

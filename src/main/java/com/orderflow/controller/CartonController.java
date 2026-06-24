@@ -3,6 +3,9 @@ package com.orderflow.controller;
 import com.orderflow.dto.CartonDto;
 import com.orderflow.service.CartonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,34 +28,34 @@ public class CartonController {
         return new ResponseEntity<>(cartonService.addCarton(cartonDto), HttpStatus.CREATED);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<CartonDto>> getCartons() {
-        return new ResponseEntity<>(cartonService.getAllCartons(), HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<CartonDto> getCartonById(@PathVariable UUID id) {
         return new ResponseEntity<>(cartonService.getCartonById(id), HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<CartonDto>> getCartons(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(cartonService.getAllCartons(pageable));
+    }
+
     @GetMapping("/orders/{orderId}")
-    public ResponseEntity<List<CartonDto>> getCartonsByOrderId(@PathVariable UUID orderId) {
-        return new ResponseEntity<>(cartonService.getCartonsByOrderId(orderId), HttpStatus.OK);
+    public ResponseEntity<Page<CartonDto>> getCartonsByOrderId(@PathVariable UUID orderId, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(cartonService.getCartonsByOrderId(orderId, pageable));
     }
 
     @GetMapping("/packer/{packerId}")
-    public ResponseEntity<List<CartonDto>> getCartonsByPackerId(@PathVariable UUID packerId) {
-        return new ResponseEntity<>(cartonService.getCartonsByPackerId(packerId), HttpStatus.OK);
+    public ResponseEntity<Page<CartonDto>> getCartonsByPackerId(@PathVariable UUID packerId, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(cartonService.getCartonsByPackerId(packerId, pageable));
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public ResponseEntity<List<CartonDto>> getCartonsByWarehouseId(@PathVariable UUID warehouseId) {
-        return new ResponseEntity<>(cartonService.getCartonsByWarehouseId(warehouseId), HttpStatus.OK);
+    public ResponseEntity<Page<CartonDto>> getCartonsByWarehouseId(@PathVariable UUID warehouseId, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(cartonService.getCartonsByWarehouseId(warehouseId, pageable));
     }
 
     @GetMapping("/picking/{pickingId}")
-    public ResponseEntity<List<CartonDto>> getCartonsByPickingId(@PathVariable UUID pickingId) {
-        return new ResponseEntity<>(cartonService.getCartonsByPickingId(pickingId), HttpStatus.OK);
+    public ResponseEntity<Page<CartonDto>> getCartonsByPickingId(@PathVariable UUID pickingId, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(cartonService.getCartonsByPickingId(pickingId, pageable));
     }
 
     @PutMapping("/{id}")

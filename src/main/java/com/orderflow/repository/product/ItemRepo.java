@@ -1,6 +1,8 @@
 package com.orderflow.repository.product;
 
 import com.orderflow.entity.product.Item;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,9 +11,9 @@ import java.util.UUID;
 
 @Repository
 public interface ItemRepo extends JpaRepository<Item, UUID> {
-    List<Item> findByCategory(Item.ItemCategory category);
+    Page<Item> findByCategory(Item.ItemCategory category, Pageable pageable);
 
-    List<Item> findByStatus(Item.ItemStatus status);
+    Page<Item> findByStatus(Item.ItemStatus status, Pageable pageable);
 
-    List<Item> findBySourceType(Item.InwardSource sourceType);
+    Page<Item> findBySourceType(Item.InwardSource sourceType, Pageable pageable);
 }

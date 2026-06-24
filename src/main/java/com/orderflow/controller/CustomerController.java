@@ -1,15 +1,16 @@
 package com.orderflow.controller;
 
 import com.orderflow.dto.CustomerDto;
-import com.orderflow.mapper.CustomerMapper;
 import com.orderflow.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,8 +27,8 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getAllCustomers(){
-        return new ResponseEntity<>(customerService.getAllCustomers(), HttpStatus.OK);
+    public ResponseEntity<Page<CustomerDto>> getAllCustomers(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(customerService.getAllCustomers(pageable));
     }
 
     @GetMapping("/code/{code}")

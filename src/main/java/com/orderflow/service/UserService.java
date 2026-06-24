@@ -10,6 +10,8 @@ import com.orderflow.mapper.UserMapper;
 import com.orderflow.repository.user.UserRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +47,9 @@ public class UserService {
         return userMapper.userToUserDto(userRepo.save(user));
     }
 
-    public List<UserDto> getAllUsers(){
-        return userMapper.usersToUserDtos(userRepo.findAll());
+    public Page<UserDto> getAllUsers(Pageable pageable){
+//        return userMapper.usersToUserDtos(userRepo.findAll());
+        return userRepo.findAll(pageable).map(userMapper::userToUserDto);
     }
 
     public UserDto getUserByCode(String code){
@@ -54,9 +57,8 @@ public class UserService {
         return userMapper.userToUserDto(user.orElseThrow( () -> new UserNotFoundException("User not found")));
     }
 
-    public List<UserDto> getUserByFieldOfWork(FieldOfWork fieldOfWork){
-        List<User> users = userRepo.findByFieldOfWork(fieldOfWork);
-        return userMapper.usersToUserDtos(users);
+    public Page<UserDto> getUserByFieldOfWork(FieldOfWork fieldOfWork, Pageable pageable) {
+        return userRepo.findByFieldOfWork(fieldOfWork, pageable).map(userMapper::userToUserDto);
     }
 
     public UserDto getUserById(UUID id){

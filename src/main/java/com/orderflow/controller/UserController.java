@@ -5,6 +5,9 @@ import com.orderflow.entity.user.FieldOfWork;
 import com.orderflow.mapper.UserMapper;
 import com.orderflow.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,8 +34,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers(){
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    public ResponseEntity<Page<UserDto>> getAllUsers(@PageableDefault(size = 20) Pageable pageable){
+        return new ResponseEntity<>(userService.getAllUsers(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/code/{code}")
@@ -40,10 +43,9 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserByCode(code), HttpStatus.OK);
     }
 
-    @GetMapping("fieldOfWork/{fieldOfWork}")
-    public ResponseEntity<List<UserDto>> getUserByFieldOfWork(@PathVariable FieldOfWork fieldOfWork){
-        List<UserDto> users = userService.getUserByFieldOfWork(fieldOfWork);
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    @GetMapping("/fieldOfWork/{fieldOfWork}")
+    public ResponseEntity<Page<UserDto>> getUserByFieldOfWork(@PathVariable FieldOfWork fieldOfWork, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(userService.getUserByFieldOfWork(fieldOfWork, pageable));
     }
 
     @GetMapping("/{id}")
@@ -67,13 +69,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/deactivate/{id}")
+    @PatchMapping("/deactivate/{id}")
     public ResponseEntity<?> deactivateUser(@PathVariable UUID id){
         userService.disableUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/activate/{id}")
+    @PatchMapping("/activate/{id}")
     public ResponseEntity<?> activateUser(@PathVariable UUID id){
         userService.enableUser(id);
         return new ResponseEntity<>(HttpStatus.OK);

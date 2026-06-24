@@ -8,6 +8,8 @@ import com.orderflow.repository.warehouse.WarehouseRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,8 +36,8 @@ public class WarehouseService {
         return warehouseMapper.warehouseToWarehouseDto(warehouseRepo.save(warehouse));
     }
 
-    public List<WarehouseDto> getAllWarehouses() {
-        return warehouseMapper.warehousesToWarehouseDtos(warehouseRepo.findAll());
+    public Page<WarehouseDto> getAllWarehouses(Pageable pageable) {
+        return warehouseRepo.findAll(pageable).map(warehouseMapper::warehouseToWarehouseDto);
     }
 
     public WarehouseDto getWarehouseById(UUID id) {

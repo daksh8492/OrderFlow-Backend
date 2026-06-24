@@ -6,6 +6,8 @@ import com.orderflow.exceptions.CustomerNotFoundException;
 import com.orderflow.mapper.CustomerMapper;
 import com.orderflow.repository.customer.CustomerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +34,9 @@ public class CustomerService {
         return customerMapper.customerToCustomerDto(customerRepo.save(customer));
     }
 
-    public List<CustomerDto> getAllCustomers() {return customerMapper.customersToCustomerDtos(customerRepo.findAll());}
+    public Page<CustomerDto> getAllCustomers(Pageable pageable) {
+        return customerRepo.findAll(pageable).map(customerMapper::customerToCustomerDto);
+    }
 
     public CustomerDto getCustomerByCode(String code){
         Optional<Customer> customer = customerRepo.findByCustomerCode(code);

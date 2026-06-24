@@ -4,6 +4,9 @@ import com.orderflow.dto.WarehouseDto;
 import com.orderflow.mapper.WarehouseMapper;
 import com.orderflow.service.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +30,8 @@ public class WarehouseController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
-    public ResponseEntity<List<WarehouseDto>> getAllWarehouses(){
-        return new ResponseEntity<>(warehouseService.getAllWarehouses(), HttpStatus.OK);
+    public ResponseEntity<Page<WarehouseDto>> getAllWarehouses(@PageableDefault(size = 10) Pageable pageable){
+        return new ResponseEntity<>(warehouseService.getAllWarehouses(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

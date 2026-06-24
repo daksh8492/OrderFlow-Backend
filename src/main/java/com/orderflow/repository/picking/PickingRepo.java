@@ -1,6 +1,9 @@
 package com.orderflow.repository.picking;
 
+import com.orderflow.dto.PickingSummaryDto;
 import com.orderflow.entity.picking.Picking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +20,8 @@ public interface PickingRepo extends JpaRepository<Picking, UUID> {
     List<Picking> findByWarehouse_WarehouseId(UUID warehouseWarehouseId);
 
     boolean existsByOrder_OrderId(UUID orderOrderId);
+
+    Page<Picking> findByWarehouse_WarehouseId(UUID warehouseWarehouseId, Pageable pageable);
+
+    Page<Picking> findByPicker_UserId(UUID pickerUserId, Pageable pageable);
 }

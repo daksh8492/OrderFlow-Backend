@@ -13,6 +13,8 @@ import com.orderflow.repository.shipment.ShipmentRepo;
 import com.orderflow.util.AuthUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -59,8 +61,8 @@ public class ShipmentService {
     }
 
     @Transactional
-    public List<ShipmentDto> getAllShipments() {
-        return shipmentMapper.shipmentsToShipmentDtos(shipmentRepo.findAllByOrderByCreatedAtDesc());
+    public Page<ShipmentDto> getAllShipments(Pageable pageable) {
+        return shipmentRepo.findAllByOrderByCreatedAtDesc(pageable).map(shipmentMapper::shipmentToShipmentDto);
     }
 
     @Transactional

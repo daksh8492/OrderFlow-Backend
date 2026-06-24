@@ -18,6 +18,8 @@ import com.orderflow.repository.warehouse.WarehouseRepo;
 import com.orderflow.repository.warehouse.WarehouseStockRepo;
 import com.orderflow.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -195,13 +197,13 @@ public class OrderService {
     }
 
     @Transactional
-    public List<OrderSummaryDto> getAllOrders() {
-        return orderMapper.ordersToOrderSummaryDtos(orderRepo.findAllByOrderByOrderNumberDesc());
+    public Page<OrderSummaryDto> getAllOrders(Pageable pageable) {
+        return orderRepo.findAllByOrderByOrderNumberDesc(pageable).map(orderMapper::orderToOrderSummaryDto);
     }
 
     @Transactional
-    public List<OrderSummaryDto> getOrdersByCustomerId(UUID customerId) {
-        return orderMapper.ordersToOrderSummaryDtos(orderRepo.findAllByCustomer_CustomerId(customerId));
+    public Page<OrderSummaryDto> getOrdersByCustomerId(UUID customerId, Pageable pageable) {
+        return orderRepo.findAllByCustomer_CustomerId(customerId, pageable).map(orderMapper::orderToOrderSummaryDto);
     }
 
     @Transactional
@@ -238,8 +240,8 @@ public class OrderService {
     }
 
     @Transactional
-    public List<OrderSummaryDto> getALlByStatus(Order.OrderStatus status) {
-        return orderMapper.ordersToOrderSummaryDtos(orderRepo.findByStatus(status));
+    public Page<OrderSummaryDto> getALlByStatus(Order.OrderStatus status, Pageable pageable) {
+        return orderRepo.findByStatus(status, pageable).map(orderMapper::orderToOrderSummaryDto);
     }
 
     @Transactional
