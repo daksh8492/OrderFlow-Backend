@@ -14,15 +14,15 @@ import java.util.UUID;
 @Repository
 public interface WarehouseLocationRepo extends JpaRepository<WarehouseLocation, UUID> {
 
-    Page<WarehouseLocation> findByWarehouse_WarehouseId(UUID id, Pageable pageable);
+    List<WarehouseLocation> findByWarehouse_WarehouseId(UUID id);
 
-    Page<WarehouseLocation> findAllByParentLocation_LocationId(UUID id, Pageable pageable);
+    List<WarehouseLocation> findAllByParentLocation_LocationId(UUID id);
 
-    Page<WarehouseLocation> findAllByLocationType(
-            WarehouseLocation.WarehouseLocationType type,
-            Pageable pageable);
+    List<WarehouseLocation> findAllByLocationType(WarehouseLocation.WarehouseLocationType type);
 
     Long countByWarehouseAndLocationTypeAndParentLocation(Warehouse warehouse, WarehouseLocation.WarehouseLocationType locationType, WarehouseLocation parentLocation);
 
     List<WarehouseStock> findAllByLocationId(UUID locationId);
+
+    List<WarehouseLocation> findByWarehouse_WarehouseIdAndLocationType(UUID warehouseId, WarehouseLocation.WarehouseLocationType locationType);
 }

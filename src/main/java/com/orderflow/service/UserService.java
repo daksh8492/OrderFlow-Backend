@@ -104,4 +104,9 @@ public class UserService {
         userRepo.save(user);
     }
 
+    public Page<UserDto> searchUser(String query, Pageable pageable){
+        Page<User> users = userRepo.findByNameContainingIgnoreCaseOrCodeContainingIgnoreCaseOrContactEmailContainingIgnoreCase(query, query, query, pageable);
+        return users.map(userMapper::userToUserDto);
+    }
+
 }

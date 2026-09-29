@@ -11,8 +11,6 @@ import com.orderflow.mapper.WarehouseMapper;
 import com.orderflow.repository.warehouse.WarehouseLocationRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,13 +32,13 @@ public class WarehouseLocationService {
 
     public WarehouseLocationDto addWarehouseLocation(WarehouseLocationDto warehouseLocationDto) {
         WarehouseLocation warehouseLocation = warehouseLocationMapper.warehouseLocationDtoToWarehouseLocation(warehouseLocationDto);
-        Warehouse warehouse = warehouseRepo.findById(warehouseLocation.getWarehouse().getWarehouseId()).orElseThrow( () -> new WarehouseNotFoundException("Warehouse does not exist"));
+        Warehouse warehouse = warehouseRepo.findById(warehouseLocation.getWarehouse().getWarehouseId()).orElseThrow(() -> new WarehouseNotFoundException("Warehouse does not exist"));
         warehouseLocation.setWarehouse(warehouse);
 
         WarehouseLocation parent = null;
 
-        if (warehouseLocation.getParentLocation() != null){
-            parent = warehouseLocationRepo.findById(warehouseLocation.getParentLocation().getLocationId()).orElseThrow( () -> new WarehouseLocationNotFoundException("Parent Warehouse location not found"));
+        if (warehouseLocation.getParentLocation() != null) {
+            parent = warehouseLocationRepo.findById(warehouseLocation.getParentLocation().getLocationId()).orElseThrow(() -> new WarehouseLocationNotFoundException("Parent Warehouse location not found"));
         }
         warehouseLocation.setParentLocation(parent);
 
@@ -54,16 +52,19 @@ public class WarehouseLocationService {
                 code = String.valueOf(next);
             }
             case ROW -> {
-                if (warehouseLocation.getParentLocation().getLocationType() != WarehouseLocation.WarehouseLocationType.ZONE) throw new WarehouseLocationTypeInvalidException("Invalid parent location for location type ROW");
+                if (warehouseLocation.getParentLocation().getLocationType() != WarehouseLocation.WarehouseLocationType.ZONE)
+                    throw new WarehouseLocationTypeInvalidException("Invalid parent location for location type ROW");
                 code = String.valueOf(count + 1);
             }
             case RACK -> {
-                if (warehouseLocation.getParentLocation().getLocationType() != WarehouseLocation.WarehouseLocationType.ROW) throw new WarehouseLocationTypeInvalidException("Invalid location type RACK");
+                if (warehouseLocation.getParentLocation().getLocationType() != WarehouseLocation.WarehouseLocationType.ROW)
+                    throw new WarehouseLocationTypeInvalidException("Invalid location type RACK");
                 char next = (char) ('a' + count);
                 code = String.valueOf(next);
             }
             case BIN -> {
-                if (warehouseLocation.getParentLocation().getLocationType() != WarehouseLocation.WarehouseLocationType.RACK) throw new WarehouseLocationTypeInvalidException("Invalid location type BIN");
+                if (warehouseLocation.getParentLocation().getLocationType() != WarehouseLocation.WarehouseLocationType.RACK)
+                    throw new WarehouseLocationTypeInvalidException("Invalid location type BIN");
                 code = String.valueOf(count + 1);
             }
             default -> throw new IllegalArgumentException("invalid location type");
@@ -99,36 +100,20 @@ public class WarehouseLocationService {
         return warehouseLocationMapper.warehouseLocationToWarehouseLocationDto(warehouseLocationRepo.save(warehouseLocation));
     }
 
-    public Page<WarehouseLocationDto> getAllWarehouseLocations(Pageable pageable) {
-        return warehouseLocationRepo.findAll(pageable)
-                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
+    public List<WarehouseLocationDto> getAllWarehouseLocations() {
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAll());
     }
 
-    public Page<WarehouseLocationDto> getAllLocationsFromWarehouse(
-            UUID id,
-            Pageable pageable) {
-
-        return warehouseLocationRepo
-                .findByWarehouse_WarehouseId(id, pageable)
-                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
+    public List<WarehouseLocationDto> getAllLocationsFromWarehouse(UUID id) {
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findByWarehouse_WarehouseIdAndLocationType(id, WarehouseLocation.WarehouseLocationType.ZONE));
     }
 
-    public Page<WarehouseLocationDto> getChildrenLocations(
-            UUID id,
-            Pageable pageable) {
-
-        return warehouseLocationRepo
-                .findAllByParentLocation_LocationId(id, pageable)
-                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
+    public List<WarehouseLocationDto> getChildrenLocations(UUID id) {
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAllByParentLocation_LocationId(id));
     }
 
-    public Page<WarehouseLocationDto> getAllLocationFromType(
-            WarehouseLocation.WarehouseLocationType type,
-            Pageable pageable) {
-
-        return warehouseLocationRepo
-                .findAllByLocationType(type, pageable)
-                .map(warehouseLocationMapper::warehouseLocationToWarehouseLocationDto);
+    public List<WarehouseLocationDto> getAllLocationFromType(WarehouseLocation.WarehouseLocationType type) {
+        return warehouseLocationMapper.warehouseLocationsToWarehouseLocationDtos(warehouseLocationRepo.findAllByLocationType(type));
     }
 }
 

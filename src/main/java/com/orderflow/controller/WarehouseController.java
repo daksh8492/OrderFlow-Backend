@@ -1,6 +1,7 @@
 package com.orderflow.controller;
 
 import com.orderflow.dto.WarehouseDto;
+import com.orderflow.entity.warehouse.Warehouse;
 import com.orderflow.mapper.WarehouseMapper;
 import com.orderflow.service.WarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class WarehouseController {
     @PostMapping
     public ResponseEntity<WarehouseDto> addWarehouse(@RequestBody WarehouseDto warehouseDto){
         return new ResponseEntity<>(warehouseService.addWarehouse(warehouseDto), HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{id}/status/{status}")
+    public ResponseEntity<WarehouseDto> updateWarehouseStatus(@PathVariable UUID id, @PathVariable Warehouse.WarehouseStatus status){
+        return new ResponseEntity<>(warehouseService.updateStatus(id, status), HttpStatus.OK);
     }
 
     @GetMapping

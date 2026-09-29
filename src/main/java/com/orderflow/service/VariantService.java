@@ -87,6 +87,10 @@ public class VariantService {
         return variantMapper.variantsToVariantDtos(variantRepo.findByItem_ItemId(id));
     }
 
+    public List<VariantDto> getVariantsByIds(List<UUID> ids){
+        return variantMapper.variantsToVariantDtos(variantRepo.findAllById(ids));
+    }
+
     public VariantDto activateVariant(UUID id) {
         Variant variant = variantRepo.findById(id).orElseThrow(() -> new VariantNotFoundException("Variant not found"));
         variant.setStatus(Variant.VariantStatus.ACTIVE);

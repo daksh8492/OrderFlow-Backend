@@ -17,6 +17,7 @@ import com.orderflow.repository.product.VariantRepo;
 import com.orderflow.repository.warehouse.WarehouseRepo;
 import com.orderflow.repository.warehouse.WarehouseStockRepo;
 import com.orderflow.util.AuthUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,14 +26,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.orderflow.entity.user.User;
+import com.orderflow.repository.user.UserRepo;
 
 @Service
 public class OrderService {
 
     @Autowired
     private OrderRepo orderRepo;
+
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     private OrderItemRepo orderItemRepo;
@@ -268,6 +276,13 @@ public class OrderService {
         order.setStatus(Order.OrderStatus.PROCESSING);
 
         return orderMapper.orderToOrderDto(orderRepo.save(order));
+    }
+
+    @Transactional
+    public Page<OrderSummaryDto> getPickableOrders(Pageable pageable, Principal principal) {
+        User user = userRepo.findByCode(principal.getName()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UUID warehouseId = user.getUserWarehouse().getWarehouseId();
+        return orderRepo.findByStatusAndFulfillingWarehouse_WarehouseId(Order.OrderStatus.PROCESSING, warehouseId, pageable).map(orderMapper::orderToOrderSummaryDto);
     }
 
     private String generateOrderNumber() {

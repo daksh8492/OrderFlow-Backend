@@ -1,6 +1,7 @@
 package com.orderflow.repository.order;
 
 import com.orderflow.entity.order.Order;
+import com.orderflow.entity.warehouse.Warehouse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,6 @@ public interface OrderRepo extends JpaRepository<Order, UUID> {
     Page<Order> findAllByOrderByOrderNumberDesc(Pageable pageable);
 
     Page<Order> findByStatus(Order.OrderStatus status, Pageable pageable);
+
+    Page<Order> findByStatusAndFulfillingWarehouse_WarehouseId(Order.OrderStatus status, UUID fulfillingWarehouseWarehouseId, Pageable pageable);
 }

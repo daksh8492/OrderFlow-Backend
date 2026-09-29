@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -88,6 +89,12 @@ public class OrderController {
     @PatchMapping("/{orderId}/assign-warehouse/{warehouseId}")
     public ResponseEntity<OrderDto> assignWarehouse(@PathVariable UUID orderId, @PathVariable UUID warehouseId) {
         return new ResponseEntity<>(orderService.assignWarehouse(orderId, warehouseId), HttpStatus.OK);
+    }
+
+    @GetMapping("/pickable")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
+    public ResponseEntity<Page<OrderSummaryDto>> getPickableOrders(Principal principal, @PageableDefault(size = 20) Pageable pageable) {
+        return new ResponseEntity<>(orderService.getPickableOrders(pageable, principal), HttpStatus.OK);
     }
 
 }

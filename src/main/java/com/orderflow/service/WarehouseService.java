@@ -33,6 +33,13 @@ public class WarehouseService {
             count++;
         } while (warehouseRepo.existsByCode(code));
         warehouse.setCode(code);
+        warehouse.setStatus(Warehouse.WarehouseStatus.ACTIVE);
+        return warehouseMapper.warehouseToWarehouseDto(warehouseRepo.save(warehouse));
+    }
+
+    public WarehouseDto updateStatus(UUID id, Warehouse.WarehouseStatus status) {
+        Warehouse warehouse = warehouseRepo.findById(id).orElseThrow(() -> new WarehouseNotFoundException("Warehouse does not exist"));
+        warehouse.setStatus(status);
         return warehouseMapper.warehouseToWarehouseDto(warehouseRepo.save(warehouse));
     }
 

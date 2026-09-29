@@ -26,33 +26,33 @@ public class VendorController {
     private VendorService vendorService;
 
     @PostMapping
-    public ResponseEntity<VendorDto> createVendor(@RequestBody VendorDto vendorDto){
+    public ResponseEntity<VendorDto> createVendor(@RequestBody VendorDto vendorDto) {
         return new ResponseEntity<>(vendorService.addVendor(vendorDto), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<Page<VendorDto>> getAllVendors(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(vendorService.getAllVendors(pageable));
+    public ResponseEntity<Page<VendorDto>> getAllVendors(@RequestParam(required = false) String search, @RequestParam(required = false) Vendor.VendorStatus status, @PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(vendorService.searchVendors(search, status, pageable));
     }
 
     @GetMapping("/code/{code}")
-    public ResponseEntity<VendorDto> getVendorByCode(@PathVariable String code){
+    public ResponseEntity<VendorDto> getVendorByCode(@PathVariable String code) {
         return new ResponseEntity<>(vendorService.getVendorByCode(code), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VendorDto> getVendorById(@PathVariable UUID id){
+    public ResponseEntity<VendorDto> getVendorById(@PathVariable UUID id) {
         return new ResponseEntity<>(vendorService.getVendorById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VendorDto> updateVendor(@PathVariable UUID id, @RequestBody VendorDto vendorDto){
+    public ResponseEntity<VendorDto> updateVendor(@PathVariable UUID id, @RequestBody VendorDto vendorDto) {
         return new ResponseEntity<>(vendorService.updateVendor(id, vendorDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<?> deleteVendor(@PathVariable UUID id){
+    public ResponseEntity<?> deleteVendor(@PathVariable UUID id) {
         vendorService.deleteVendor(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

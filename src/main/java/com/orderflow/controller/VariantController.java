@@ -38,7 +38,7 @@ public class VariantController {
         return new ResponseEntity<>(variantService.getVariantById(id), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<VariantDto> updateVariant(@PathVariable UUID id, @RequestBody VariantDto variantDto){
         return new ResponseEntity<>(variantService.updateVariant(id, variantDto), HttpStatus.OK);
     }
@@ -60,6 +60,12 @@ public class VariantController {
     @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
     public ResponseEntity<VariantDto> getVariantByBarcode(@PathVariable String barcode){
         return new ResponseEntity<>(variantService.getVariantByBarcode(barcode), HttpStatus.OK);
+    }
+
+    @PostMapping("/ids")
+    @PreAuthorize("hasAnyRole('ADMIN','INVENTORY_MANAGER','WAREHOUSE_OPERATOR')")
+    public ResponseEntity<List<VariantDto>> getVariantsByIds(@RequestBody List<UUID> ids){
+        return new ResponseEntity<>(variantService.getVariantsByIds(ids),HttpStatus.OK);
     }
 
     @GetMapping("/item/{id}")

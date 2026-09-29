@@ -81,4 +81,9 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public  ResponseEntity<Page<UserDto>> searchUser(String query, @PageableDefault(size = 20) Pageable pageable){
+        return new ResponseEntity<>(userService.searchUser(query, pageable), HttpStatus.OK);
+    }
+
 }

@@ -2,12 +2,8 @@ package com.orderflow.controller;
 
 import com.orderflow.dto.WarehouseLocationDto;
 import com.orderflow.entity.warehouse.WarehouseLocation;
-import com.orderflow.mapper.WarehouseLocationMapper;
 import com.orderflow.service.WarehouseLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,36 +37,36 @@ public class WarehouseLocationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/activate")
+    @PatchMapping("/{id}/activate")
     @PreAuthorize("hasAnyRole('ADMIN','WAREHOUSE_OPERATOR')")
     public ResponseEntity<WarehouseLocationDto> activateWarehouseLocation(@PathVariable UUID id) {
         return new ResponseEntity<>(warehouseLocationService.activateWarehouseLocationById(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/deactivate")
+    @PatchMapping("/{id}/deactivate")
     @PreAuthorize("hasAnyRole('ADMIN','WAREHOUSE_OPERATOR')")
     public ResponseEntity<WarehouseLocationDto> deactivateWarehouseLocation(@PathVariable UUID id) {
         return new ResponseEntity<>(warehouseLocationService.deactivateWarehouseLocationById(id), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<WarehouseLocationDto>> getAllWarehouseLocations(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(warehouseLocationService.getAllWarehouseLocations(pageable));
+    public ResponseEntity<List<WarehouseLocationDto>> getAllWarehouseLocations() {
+        return ResponseEntity.ok(warehouseLocationService.getAllWarehouseLocations());
     }
 
     @GetMapping("/warehouse/{id}")
-    public ResponseEntity<Page<WarehouseLocationDto>> getWarehouseLocationByWarehouseId(@PathVariable UUID id, @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(warehouseLocationService.getAllLocationsFromWarehouse(id, pageable));
+    public ResponseEntity<List<WarehouseLocationDto>> getWarehouseLocationByWarehouseId(@PathVariable UUID id) {
+        return ResponseEntity.ok(warehouseLocationService.getAllLocationsFromWarehouse(id));
     }
 
     @GetMapping("/{id}/children")
-    public ResponseEntity<Page<WarehouseLocationDto>> getChildren(@PathVariable UUID id, @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(warehouseLocationService.getChildrenLocations(id, pageable));
+    public ResponseEntity<List<WarehouseLocationDto>> getChildren(@PathVariable UUID id) {
+        return ResponseEntity.ok(warehouseLocationService.getChildrenLocations(id));
     }
 
     @GetMapping("/type/{type}")
-    public ResponseEntity<Page<WarehouseLocationDto>> getWarehouseLocationsByType(@PathVariable WarehouseLocation.WarehouseLocationType type, @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(warehouseLocationService.getAllLocationFromType(type, pageable));
+    public ResponseEntity<List<WarehouseLocationDto>> getWarehouseLocationsByType(@PathVariable WarehouseLocation.WarehouseLocationType type) {
+        return ResponseEntity.ok(warehouseLocationService.getAllLocationFromType(type));
     }
 
 }

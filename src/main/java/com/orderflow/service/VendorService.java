@@ -24,35 +24,40 @@ public class VendorService {
     @Autowired
     private VendorMapper vendorMapper;
 
-    public VendorDto addVendor(VendorDto vendorDto){
+    public VendorDto addVendor(VendorDto vendorDto) {
         Vendor vendor = vendorMapper.vendorDtoToVendor(vendorDto);
         long count = vendorRepo.count();
         String code;
-        do{
-            code = "VND-"+String.format("%04d", count+1);
+        do {
+            code = "VND-" + String.format("%04d", count + 1);
             count++;
-        }while (vendorRepo.existsByVendorCode(code));
+        } while (vendorRepo.existsByVendorCode(code));
         vendor.setVendorCode(code);
+        vendor.setStatus(Vendor.VendorStatus.ACTIVE);
         return vendorMapper.vendorToVendorDto(vendorRepo.save(vendor));
     }
 
-    public Page<VendorDto> getAllVendors(Pageable pageable) {
-        return vendorRepo.findAll(pageable).map(vendorMapper::vendorToVendorDto);
+//    public Page<VendorDto> getAllVendors(Pageable pageable) {
+//        return vendorRepo.findAll(pageable).map(vendorMapper::vendorToVendorDto);
+//    }
+
+    public Page<VendorDto> searchVendors(String search, Vendor.VendorStatus status, Pageable pageable) {
+        return vendorRepo.searchVendors(search, status, pageable).map(vendorMapper::vendorToVendorDto);
     }
 
-    public VendorDto getVendorByCode(String code){
+    public VendorDto getVendorByCode(String code) {
         Optional<Vendor> vendor = vendorRepo.findByVendorCode(code);
-        return vendorMapper.vendorToVendorDto(vendor.orElseThrow(()-> new VendorNotFoundException("Vendor not found")));
+        return vendorMapper.vendorToVendorDto(vendor.orElseThrow(() -> new VendorNotFoundException("Vendor not found")));
     }
 
-    public VendorDto getVendorById(UUID id){
+    public VendorDto getVendorById(UUID id) {
         Optional<Vendor> vendor = vendorRepo.findById(id);
-        return vendorMapper.vendorToVendorDto(vendor.orElseThrow(()-> new VendorNotFoundException("Vendor not found")));
+        return vendorMapper.vendorToVendorDto(vendor.orElseThrow(() -> new VendorNotFoundException("Vendor not found")));
     }
 
-    public VendorDto updateVendor(UUID id, VendorDto vendordDto){
+    public VendorDto updateVendor(UUID id, VendorDto vendordDto) {
         Vendor vendor = vendorMapper.vendorDtoToVendor(vendordDto);
-        Vendor existingVendor = vendorRepo.findById(id).orElseThrow(()-> new VendorNotFoundException("Vendor not found"));
+        Vendor existingVendor = vendorRepo.findById(id).orElseThrow(() -> new VendorNotFoundException("Vendor not found"));
         BeanUtils.copyProperties(vendor, existingVendor, "vendorId", "vendorCode");
         if (vendor.getVendorName() != null) existingVendor.setVendorName(vendor.getVendorName());
         if (vendor.getAddress() != null) existingVendor.setAddress(vendor.getAddress());
@@ -64,12 +69,11 @@ public class VendorService {
         if (vendor.getContactTelephone() != null) existingVendor.setContactTelephone(vendor.getContactTelephone());
         if (vendor.getPaymentTerms() != null) existingVendor.setPaymentTerms(vendor.getPaymentTerms());
         if (vendor.getMinimumOrderValue() != null) existingVendor.setMinimumOrderValue(vendor.getMinimumOrderValue());
-        if (vendor.getStatus() != null) existingVendor.setStatus(vendor.getStatus());
         return vendorMapper.vendorToVendorDto(vendorRepo.save(existingVendor));
     }
 
-    public void deleteVendor(UUID id){
-        Vendor vendor = vendorRepo.findById(id).orElseThrow(()-> new VendorNotFoundException("Vendor not found"));
+    public void deleteVendor(UUID id) {
+        Vendor vendor = vendorRepo.findById(id).orElseThrow(() -> new VendorNotFoundException("Vendor not found"));
         vendorRepo.delete(vendor);
     }
 }

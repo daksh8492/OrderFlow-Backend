@@ -79,7 +79,7 @@ public class ShipmentService {
         if (shipment.getCartons().contains(carton)) throw new IllegalArgumentException("Carton already exists in shipment");
         if (carton.getStatus() != Carton.CartonStatus.PACKED) throw new IllegalArgumentException("Only packed cartons can be added to shipment");
 
-        if (!shipmentRepo.existsByCartonsContaining(carton)) throw new IllegalArgumentException("Carton already belongs to another shipment");
+        if (shipmentRepo.existsByCartonsContaining(carton)) throw new IllegalArgumentException("Carton already belongs to another shipment");
 
         shipment.addCarton(carton);
 

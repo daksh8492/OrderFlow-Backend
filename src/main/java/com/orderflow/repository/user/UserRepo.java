@@ -18,5 +18,7 @@ public interface UserRepo extends JpaRepository<User, UUID> {
 
     Page<User> findByFieldOfWork(FieldOfWork fieldOfWork, Pageable pageable);
 
+    Page<User> findByNameContainingIgnoreCaseOrCodeContainingIgnoreCaseOrContactEmailContainingIgnoreCase(String name, String code, String contactEmail, Pageable pageable);
+
     boolean existsByCode(String code);
 }

@@ -1,6 +1,7 @@
 package com.orderflow.controller;
 
 import com.orderflow.dto.CustomerDto;
+import com.orderflow.entity.customer.Customer;
 import com.orderflow.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,33 +23,34 @@ public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<CustomerDto> addCustomer(@RequestBody CustomerDto customerDto){
+    public ResponseEntity<CustomerDto> addCustomer(@RequestBody CustomerDto customerDto) {
         return new ResponseEntity<>(customerService.addCustomer(customerDto), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<CustomerDto>> getAllCustomers(@PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(customerService.getAllCustomers(pageable));
-    }
-
     @GetMapping("/code/{code}")
-    public ResponseEntity<CustomerDto> getCustomerByCode(@PathVariable String code){
+    public ResponseEntity<CustomerDto> getCustomerByCode(@PathVariable String code) {
         return new ResponseEntity<>(customerService.getCustomerByCode(code), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable UUID id){
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable UUID id) {
         return new ResponseEntity<>(customerService.getCustomerById(id), HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Page<CustomerDto>> getCustomers(@RequestParam(required = false) String search, @RequestParam(required = false) Customer.CustomerStatus status, @PageableDefault(size = 10) Pageable pageable) {
+        Page<CustomerDto> customers = customerService.searchCustomers(search, status, pageable);
+        return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable UUID id, @RequestBody CustomerDto customerDto){
+    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable UUID id, @RequestBody CustomerDto customerDto) {
         return new ResponseEntity<>(customerService.updateCustomer(id, customerDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<?> deleteCustomer(@PathVariable UUID id){
+    public ResponseEntity<?> deleteCustomer(@PathVariable UUID id) {
         customerService.deleteCustomer(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
