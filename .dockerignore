@@ -1,0 +1,7 @@
+.github
+.git
+.idea
+.vscode
+target
+*.iml
+.env

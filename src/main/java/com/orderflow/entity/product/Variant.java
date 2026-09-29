@@ -35,6 +35,7 @@ public class Variant {
     private String barcode;
     @ElementCollection
     @CollectionTable(name = "item_variant_images", joinColumns = @JoinColumn(name = "variant_id"))
+    @OrderColumn(name = "image_order")
     @Column(name = "image_url")
     private List<String> imageUrls;
     private Instant createdAt;
