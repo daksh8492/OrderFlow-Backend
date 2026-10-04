@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +22,16 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response){
         LoginResponse loginResponse = authService.login(loginRequest.code(), loginRequest.password());
-        Cookie cookie = new Cookie("refreshToken", loginResponse.refreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", loginResponse.refreshToken())
+                .httpOnly(true)
+                .secure(true)
+                        .path("/")
+                                .sameSite("None")
+                                        .build();
+//        Cookie cookie = new Cookie("refreshToken", loginResponse.refreshToken());
+//        cookie.setHttpOnly(true);
+//        cookie.setPath("/");
+        response.addHeader("Set-Cookie", cookie.toString());
         return new ResponseEntity<>(loginResponse.accessToken(), HttpStatus.OK);
     }
 
@@ -36,10 +43,15 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refreshToken", null);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("None")
+                .maxAge(0)
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
