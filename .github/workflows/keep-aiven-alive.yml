@@ -1,0 +1,39 @@
+
+name: Keep Aiven Database Alive
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install MySQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-mysql-client
+
+      - name: Ping Aiven MySQL Database
+        env:
+          AIVEN_HOST: ${{ secrets.AIVEN_HOST }}
+          AIVEN_PORT: ${{ secrets.AIVEN_PORT }}
+          AIVEN_USER: ${{ secrets.AIVEN_USER }}
+          AIVEN_PASSWORD: ${{ secrets.AIVEN_PASSWORD }}
+          AIVEN_DATABASE: ${{ secrets.AIVEN_DATABASE }}
+        run: |
+          export MYSQL_PWD="$AIVEN_PASSWORD"
+
+          mysql \
+            --host="$AIVEN_HOST" \
+            --port="$AIVEN_PORT" \
+            --user="$AIVEN_USER" \
+            --database="$AIVEN_DATABASE" \
+            --ssl-mode=REQUIRED \
+            --connect-timeout=20 \
+            -e "SELECT * FROM orders LIMIT 1;"
+
+          echo "Aiven database ping successful!"
